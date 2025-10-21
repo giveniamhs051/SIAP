@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Sewa Alat Pendakian</title>
+    <title>Registrasi - Sewa Alat Pendakian</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -48,29 +48,34 @@
                     <p class="text-gray-500">Sistem Informasi Alat Pendakian</p>
                 </div>
 
-                <div id="login-form">
-                    <h2 class="text-2xl font-semibold text-gray-800 mb-2">Masuk ke Akun</h2>
-                    <p class="text-gray-600 mb-6">Selamat datang kembali!</p>
-                    <form id="loginFormElement" class="space-y-4">
+                <div id="register-form">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-2">Buat Akun Baru</h2>
+                    <p class="text-gray-600 mb-6">Lengkapi data untuk memulai.</p>
+                    <form id="registerFormElement" class="space-y-4">
                         <div>
-                            <label for="login-email" class="block text-sm font-medium text-gray-700">Email</label>
-                            <input type="email" id="login-email" name="email" placeholder="contoh@email.com" class="mt-1 block w-full px-4 py-3 bg-gray-100 border-transparent rounded-lg focus:ring-brand-yellow focus:border-brand-yellow focus:bg-white" required>
+                            <label for="register-name" class="block text-sm font-medium text-gray-700">Nama Lengkap</label>
+                            <input type="text" id="register-name" name="name" placeholder="Nama lengkap Anda" class="mt-1 block w-full px-4 py-3 bg-gray-100 border-transparent rounded-lg focus:ring-brand-yellow focus:border-brand-yellow focus:bg-white" required>
                         </div>
                         <div>
-                            <label for="login-password" class="block text-sm font-medium text-gray-700">Kata Sandi</label>
-                            <input type="password" id="login-password" name="password" placeholder="Masukkan kata sandi" class="mt-1 block w-full px-4 py-3 bg-gray-100 border-transparent rounded-lg focus:ring-brand-yellow focus:border-brand-yellow focus:bg-white" required>
+                            <label for="register-email" class="block text-sm font-medium text-gray-700">Email</label>
+                            <input type="email" id="register-email" name="email" placeholder="contoh@email.com" class="mt-1 block w-full px-4 py-3 bg-gray-100 border-transparent rounded-lg focus:ring-brand-yellow focus:border-brand-yellow focus:bg-white" required>
                         </div>
-                        <div class="text-right">
-                            <a href="#" class="text-sm text-brand-blue hover:underline">Lupa kata sandi?</a>
+                        <div>
+                            <label for="register-password" class="block text-sm font-medium text-gray-700">Kata Sandi</label>
+                            <input type="password" id="register-password" name="password" placeholder="Minimal 8 karakter" class="mt-1 block w-full px-4 py-3 bg-gray-100 border-transparent rounded-lg focus:ring-brand-yellow focus:border-brand-yellow focus:bg-white" required>
+                        </div>
+                        <div>
+                            <label for="register-confirm-password" class="block text-sm font-medium text-gray-700">Konfirmasi Kata Sandi</label>
+                            <input type="password" id="register-confirm-password" name="confirm_password" placeholder="Ulangi kata sandi" class="mt-1 block w-full px-4 py-3 bg-gray-100 border-transparent rounded-lg focus:ring-brand-yellow focus:border-brand-yellow focus:bg-white" required>
                         </div>
                         <div>
                             <button type="submit" class="w-full bg-brand-blue text-white font-semibold py-3 px-4 rounded-lg hover:bg-opacity-90 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-blue">
-                                Masuk
+                                Daftar
                             </button>
                         </div>
                     </form>
                     <p class="text-center text-sm text-gray-600 mt-6">
-                        Belum punya akun? <a href="register.html" class="font-semibold text-brand-blue hover:underline">Daftar di sini</a>
+                        Sudah punya akun? <a href="login.html" class="font-semibold text-brand-blue hover:underline">Masuk di sini</a>
                     </p>
                 </div>
 
@@ -82,7 +87,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const loginFormElement = document.getElementById('loginFormElement');
+            const registerFormElement = document.getElementById('registerFormElement');
             
             // Fungsi untuk menampilkan alert
             function showAlert(message, isSuccess = true) {
@@ -110,24 +115,36 @@
                 }, 3000);
             }
 
-            // Handle submit form login
-            loginFormElement.addEventListener('submit', function(e) {
+            // Handle submit form registrasi
+            registerFormElement.addEventListener('submit', function(e) {
                 e.preventDefault();
-                const email = document.getElementById('login-email').value;
-                const password = document.getElementById('login-password').value;
-
-                if (!email || !password) {
-                    showAlert('Email dan kata sandi tidak boleh kosong.', false);
+                const name = document.getElementById('register-name').value;
+                const email = document.getElementById('register-email').value;
+                const password = document.getElementById('register-password').value;
+                const confirmPassword = document.getElementById('register-confirm-password').value;
+                
+                // Validasi dasar
+                if (!name || !email || !password || !confirmPassword) {
+                    showAlert('Semua kolom wajib diisi.', false);
                     return;
                 }
-                
+                if (password.length < 8) {
+                    showAlert('Kata sandi harus minimal 8 karakter.', false);
+                    return;
+                }
+                if (password !== confirmPassword) {
+                    showAlert('Konfirmasi kata sandi tidak cocok.', false);
+                    return;
+                }
+
                 // Placeholder untuk API Call
-                console.log('Mengirim data login ke /api/login:', { email, password });
-                
+                console.log('Mengirim data registrasi ke /api/register:', { name, email, password });
+
                 // Simulasi respons API
-                showAlert('Login berhasil! Mengarahkan ke dashboard...', true);
+                showAlert('Registrasi berhasil! Mengarahkan ke halaman login...', true);
                 setTimeout(() => {
-                    // window.location.href = '/dashboard'; // Arahkan ke halaman dashboard
+                    // Arahkan ke halaman login setelah registrasi sukses
+                    window.location.href = 'login.html';
                 }, 1500);
             });
         });
