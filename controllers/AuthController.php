@@ -80,7 +80,7 @@ class AuthController extends Controller {
                 'role' => $_POST['role'] ?? '', // 'penyewa' atau 'vendor'
             ];
 
-            // --- Validasi Input ---
+            // Validasi Input
             if (empty($data['nama']) || empty($data['email']) || empty($data['password']) || empty($data['confirm_password']) || empty($data['role']) || empty($data['nomor_telepon'])) {
                 $_SESSION['error_message'] = 'Semua kolom wajib diisi.';
                 $this->redirect('AuthController', 'registerView');
@@ -101,7 +101,7 @@ class AuthController extends Controller {
                  $_SESSION['error_message'] = 'Role tidak valid.';
                  $this->redirect('AuthController', 'registerView');
             }
-            // --- Akhir Validasi ---
+            
 
             // Cek apakah email sudah ada
             if ($this->authModel->findUserByEmail($data['email'])) {
