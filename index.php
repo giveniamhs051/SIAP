@@ -26,13 +26,6 @@ $controllerFile = "controllers/" . $controllerName . ".php";
 
 // Cek apakah file controller ada
 if (file_exists($controllerFile)) {
-    // Muat Base Controller dan Base Model
-    require_once "controllers/Controller.php";
-    require_once "models/Model.php";
-
-    // Muat Controller yang diminta
-    // Cek apakah file controller ada
-if (file_exists($controllerFile)) {
     // 1. Muat Base Controller dan Base Model TERLEBIH DAHULU
     require_once "controllers/Controller.php";
     require_once "models/Model.php";
@@ -67,6 +60,5 @@ if (file_exists($controllerFile)) {
         header("Location: index.php?c=AuthController&m=loginView");
         exit;
      }
-    }
 }
 ?>
