@@ -6,8 +6,6 @@ class DashboardController extends Controller {
     public function __construct() {
         // Cek apakah user sudah login, jika belum, paksa ke login
         if (!isset($_SESSION['user_id'])) {
-             // Simpan pesan error jika perlu
-             // $_SESSION['error_message'] = 'Anda harus login untuk mengakses halaman ini.';
              $this->redirect('AuthController', 'loginView');
         }
     }
@@ -17,7 +15,7 @@ class DashboardController extends Controller {
         $role = $_SESSION['user_role'] ?? 'guest'; // Ambil role dari session
         $nama = $_SESSION['user_nama'] ?? 'Pengguna'; // Ambil nama dari session
 
-        // Data yang akan dikirim ke view
+        // Data dasar yang akan dikirim ke view
         $data = [
             'namaPengguna' => $nama,
             'rolePengguna' => $role
@@ -31,9 +29,21 @@ class DashboardController extends Controller {
             case 'vendor':
                 $this->loadView('dashboard_vendor', $data);
                 break;
+            
+            // --- MODIFIKASI DI SINI ---
             case 'penyewa':
-                $this->loadView('dashboard_penyewa', $data);
+                // Muat model produk
+                $produkModel = $this->loadModel('ProdukModel');
+                
+                // Ambil data produk (contoh: 4 terlaris, 4 rekomendasi)
+                $data['produkTerlaris'] = $produkModel->getProdukTerbaruAktif(4); // Ambil 4 produk terbaru sebagai 'terlaris'
+                $data['rekomendasiProduk'] = $produkModel->getRekomendasiProduk(4); // Ambil 4 produk acak sebagai 'rekomendasi'
+                
+                // Muat view dashboard penyewa dengan data produk
+                $this->loadView('dashboard_penyewa', $data); 
                 break;
+            // --- AKHIR MODIFIKASI ---
+
             default:
                 // Jika role tidak dikenal, logout saja
                 $this->redirect('AuthController', 'logout');
