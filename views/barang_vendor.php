@@ -67,7 +67,7 @@ function formatTanggalIndonesiaSingkat($tanggal) { /* ... fungsi sama ... */ }
         <aside class="w-64 bg-brand-blue text-sidebar-text shadow-lg flex flex-col justify-between">
             <div>
                  <div class="h-20 flex items-center justify-center p-4 border-b border-gray-700/50">
-                    <img src="src/logo-siap-white.png" alt="Logo SIAP Mendaki Putih" class="h-10">
+                    <img src="src/logo-siap.png" alt="Logo SIAP Mendaki Putih" class="h-36">
                 </div>
                 <nav class="mt-4 px-3 space-y-1">
                     <a href="index.php?c=DashboardController&m=index" class="flex items-center px-4 py-2.5 rounded-lg text-sidebar-text/80 hover:bg-sidebar-hover hover:text-white transition-colors duration-200 group">
