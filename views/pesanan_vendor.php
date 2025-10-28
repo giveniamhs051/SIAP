@@ -221,6 +221,50 @@ $statuses_ui = ['Menunggu Pembayaran', 'Dikonfirmasi', 'Disewa', 'Dikembalikan',
             <?php if ($success_message): ?> showAlert('<?php echo addslashes($success_message); ?>', 'success'); <?php endif; ?>
              <?php if ($info_message): ?> showAlert('<?php echo addslashes($info_message); ?>', 'info'); <?php endif; ?>
         });
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- Logika Dropdown User Menu ---
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userMenu = document.getElementById('user-menu');
+
+            if (userMenuButton && userMenu) {
+                userMenuButton.addEventListener('click', (event) => {
+                    // Mencegah event click menyebar ke document listener di bawah
+                    event.stopPropagation(); 
+                    userMenu.classList.toggle('hidden');
+                });
+
+                // Menutup dropdown jika diklik di mana saja di luar menu
+                document.addEventListener('click', (event) => {
+                    // Periksa apakah klik terjadi di luar tombol DAN di luar menu dropdown
+                    if (!userMenuButton.contains(event.target) && !userMenu.contains(event.target)) {
+                        userMenu.classList.add('hidden');
+                    }
+                });
+
+                 // Menutup dropdown jika tombol Escape ditekan
+                document.addEventListener('keydown', (event) => {
+                    if (event.key === 'Escape' && !userMenu.classList.contains('hidden')) {
+                         userMenu.classList.add('hidden');
+                    }
+                });
+
+            } else {
+                console.error("User menu button or dropdown element not found."); // Pesan error jika elemen tidak ada
+            }
+
+            // ... (Kode JavaScript lain seperti Alert, Carousel, Litepicker, dll. tetap di sini) ...
+
+            // --- Logika Alert ---
+            function showAlert(message, type = 'success') { /* ... (fungsi showAlert sama) ... */ }
+            // Tampilkan pesan PHP
+            <?php if (isset($error_message) && $error_message): ?> showAlert('<?php echo addslashes($error_message); ?>', 'error'); <?php endif; ?>
+            <?php if (isset($success_message) && $success_message): ?> showAlert('<?php echo addslashes($success_message); ?>', 'success'); <?php endif; ?>
+             <?php if (isset($info_message) && $info_message): ?> showAlert('<?php echo addslashes($info_message); ?>', 'info'); <?php endif; ?>
+
+            // --- Tambahkan kode JS spesifik halaman lainnya di sini (jika ada) ---
+            // Contoh: Kode Carousel untuk dashboard_vendor.php
+            // Contoh: Kode Modal & Litepicker untuk barang_vendor.php
+        });
     </script>
 </body>
 </html>
