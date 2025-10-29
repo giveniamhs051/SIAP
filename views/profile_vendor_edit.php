@@ -7,8 +7,7 @@
     unset($_SESSION['success_message']);
 
     // Data vendor dari controller (variabel $vendor sudah di-extract)
-    // Digunakan di header dan form
-    $namaVendor = $vendor->nama_vendor ?? ($_SESSION['user_nama'] ?? 'Vendor'); // Ambil dari $vendor atau session
+    $namaVendor = $vendor->nama_vendor ?? ($_SESSION['user_nama'] ?? 'Vendor');
     $emailVendor = $vendor->email_vendor ?? '';
     $teleponVendor = $vendor->no_telepon ?? '';
     $alamatVendor = $vendor->alamat_vendor ?? '';
@@ -25,24 +24,31 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* Styling dasar dan scrollbar (Sama seperti barang_vendor.php) */
         body { font-family: 'Poppins', sans-serif; }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #c4c4c4; border-radius: 6px; }
         ::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
+        /* Style tambahan untuk input number (opsional) */
+        input[type='number']::-webkit-inner-spin-button,
+        input[type='number']::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type='number'] { -moz-appearance: textfield; }
     </style>
     <script>
-        // Konfigurasi Tailwind SAMA DENGAN DASHBOARD
+        // Konfigurasi Tailwind (SAMA DENGAN barang_vendor.php)
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: {
-                        'brand-blue': '#174962',
-                        'brand-yellow': '#FFBE00',
-                        'brand-gray': '#F8F9FA',
-                        'sidebar-text': '#FFFFFF', // Contoh jika diperlukan
-                        'sidebar-hover': '#2a528a', // Contoh jika diperlukan
-                        'header-bg': '#FFFFFF', // Header putih
+                     colors: {
+                        'brand-blue': '#1E3A5F', // Biru gelap sidebar
+                        'brand-yellow': '#FFBE00', // Kuning aktif
+                        'brand-gray': '#F8F9FA', // Background abu konten
+                        'sidebar-text': '#FFFFFF', // Teks putih sidebar
+                        'sidebar-hover': '#2a528a', // Hover biru lebih terang
+                        'header-bg': '#FFFFFF', // Background header putih
+                        'button-detail': '#E5E7EB', // Warna tambahan jika perlu
+                        'button-detail-hover': '#D1D5DB' // Warna tambahan jika perlu
                     }
                 }
             }
@@ -54,46 +60,42 @@
 
     <div class="flex h-screen overflow-hidden">
 
-        <aside class="w-64 bg-white shadow-lg flex flex-col justify-between" style="border-right: 1px solid #E5E7EB;">
-             <div>
-                <div class="h-20 flex items-center justify-center border-b p-4">
-                     <img src="src/logo-siap.png" alt="Logo SIAP Mendaki" class="w-40">
+        <aside class="w-64 bg-brand-blue text-sidebar-text shadow-lg flex flex-col justify-between">
+            <div>
+                 <div class="h-20 flex items-center justify-center p-4 border-b border-gray-700/50">
+                    <img src="src/logo-siap.png" alt="Logo SIAP Mendaki Putih" class="h-36">
                 </div>
-                <nav class="mt-4">
-                    <a href="index.php?c=DashboardController&m=index" class="flex items-center px-6 py-3 m-2 text-gray-600 hover:bg-gray-100 rounded-lg">
-                        <svg class="w-6 h-6 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" /></svg>
-                        Dashboard
+                <nav class="mt-4 px-3 space-y-1">
+                    <a href="index.php?c=DashboardController&m=index" class="flex items-center px-4 py-2.5 rounded-lg text-sidebar-text/80 hover:bg-sidebar-hover hover:text-white transition-colors duration-200 group">
+                        <svg class="w-5 h-5 mr-3 opacity-75 group-hover:opacity-100" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" /></svg>
+                        Beranda
                     </a>
-                    <a href="#" class="flex items-center px-6 py-3 m-2 text-gray-600 hover:bg-gray-100 rounded-lg">
-                        <svg class="w-6 h-6 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z" /></svg>
+                    <a href="index.php?c=BarangController&m=index" class="flex items-center px-4 py-2.5 rounded-lg text-sidebar-text/80 hover:bg-sidebar-hover hover:text-white transition-colors duration-200 group">
+                         <svg class="w-5 h-5 mr-3 opacity-75 group-hover:opacity-100" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z" /></svg>
                         Barang
                     </a>
-                    <a href="#" class="flex items-center px-6 py-3 m-2 text-gray-600 hover:bg-gray-100 rounded-lg">
-                        <svg class="w-6 h-6 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 0 1 0 3.75H5.625a1.875 1.875 0 0 1 0-3.75Z" /></svg>
+                    <a href="#" class="flex items-center px-4 py-2.5 rounded-lg text-sidebar-text/80 hover:bg-sidebar-hover hover:text-white transition-colors duration-200 group">
+                        <svg class="w-5 h-5 mr-3 opacity-75 group-hover:opacity-100" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 0 1 0 3.75H5.625a1.875 1.875 0 0 1 0-3.75Z" /></svg>
                         Pesanan
                     </a>
-                    <a href="#" class="flex items-center px-6 py-3 m-2 text-gray-600 hover:bg-gray-100 rounded-lg">
-                        <svg class="w-6 h-6 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" /></svg>
+                    <a href="#" class="flex items-center px-4 py-2.5 rounded-lg text-sidebar-text/80 hover:bg-sidebar-hover hover:text-white transition-colors duration-200 group">
+                       <svg class="w-5 h-5 mr-3 opacity-75 group-hover:opacity-100" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" /></svg>
                         Notifikasi
                     </a>
-                    <a href="index.php?c=ProfileController&m=index" class="flex items-center px-6 py-3 m-2 text-brand-blue bg-brand-yellow rounded-lg font-semibold">
-                       <svg class="w-6 h-6 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                         <path stroke-linecap="round" stroke-linejoin="round" d="M10.343 3.94c.09-.542.56-1.007 1.11-.947 1.054.116 2.062.51 2.968 1.144a.75.75 0 0 1 0 1.257 6.726 6.726 0 0 0-.616 7.425 8.247 8.247 0 0 1-4.908.57 8.25 8.25 0 0 1-4.908-.57 6.726 6.726 0 0 0-.616-7.425.75.75 0 0 1 0-1.257 8.98 8.98 0 0 0 2.968-1.144c.55-.06.976.405 1.11.947M16.5 14.25a6 6 0 1 0-12 0 6 6 0 0 0 12 0Z" />
-                        </svg>
-                        Profil & Pengaturan
+                    <a href="index.php?c=ProfileController&m=index" class="flex items-center px-4 py-2.5 rounded-lg bg-brand-yellow text-brand-blue font-semibold transition-colors duration-200 group">
+                        <svg class="w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0M3.75 18H7.5m3-6h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0M3.75 12H7.5" /></svg>
+                        Pengaturan
                     </a>
                 </nav>
             </div>
-             <div class="p-4 border-t">
-                 <a href="index.php?c=AuthController&m=logout" class="flex items-center justify-center px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg">
-                    <svg class="w-6 h-6 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" /></svg>
-                    Log Out
+            <div class="p-4 border-t border-gray-700/50">
+                 <a href="index.php?c=AuthController&m=logout" class="flex items-center px-4 py-2.5 rounded-lg text-sidebar-text/80 hover:bg-sidebar-hover hover:text-white transition-colors duration-200 group">
+                    <svg class="w-5 h-5 mr-3 opacity-75 group-hover:opacity-100" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" /></svg>
+                    Keluar
                 </a>
             </div>
         </aside>
-        <main class="flex-1 overflow-y-auto">
-
-             <header class="h-16 bg-header-bg flex items-center justify-between px-6 border-b sticky top-0 z-10">
+        <main class="flex-1 overflow-y-auto bg-white"> <header class="h-16 bg-header-bg flex items-center justify-between px-6 border-b sticky top-0 z-10">
                  <div class="relative">
                     <input type="text" placeholder="Telusuri..." class="w-80 px-4 py-2 pl-10 bg-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-brand-yellow text-sm">
                      <svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" /></svg>
@@ -101,8 +103,7 @@
                  <div class="flex items-center space-x-5">
                     <button class="text-gray-500 hover:text-gray-700 relative">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" /></svg>
-                        <span class="absolute -top-1 -right-1 flex h-3 w-3"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span></span>
-                    </button>
+                        </button>
 
                      <div class="relative inline-block text-left" x-data="{ open: false }" @click.away="open = false">
                         <button @click="open = !open" type="button" class="flex items-center cursor-pointer group">
@@ -118,8 +119,7 @@
                              x-transition:leave-start="transform opacity-100 scale-100"
                              x-transition:leave-end="transform opacity-0 scale-95"
                              class="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-20"
-                             style="display: none;">
-                            <div class="py-1">
+                             style="display: none;"> <div class="py-1">
                                 <a href="index.php?c=ProfileController&m=index" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                     Edit Profil
                                 </a>
@@ -133,7 +133,7 @@
             <div class="p-6">
                  <div class="bg-white p-8 rounded-lg shadow-md max-w-4xl mx-auto">
                     <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-semibold text-brand-blue">Edit Profil Vendor</h2>
+                        <h2 class="text-2xl font-semibold text-gray-800">Edit Profil Vendor</h2>
                     </div>
 
                     <form action="index.php?c=ProfileController&m=updateVendor" method="POST" enctype="multipart/form-data">
@@ -182,7 +182,7 @@
                         </div>
 
                          <div class="mt-8 flex justify-end">
-                            <button type="submit" class="px-6 py-2 bg-brand-yellow text-brand-blue font-semibold rounded-md hover:bg-yellow-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-yellow">
+                            <button type="submit" class="px-6 py-2 bg-brand-yellow text-brand-blue font-semibold rounded-md hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-yellow">
                                 Simpan Perubahan
                             </button>
                         </div>

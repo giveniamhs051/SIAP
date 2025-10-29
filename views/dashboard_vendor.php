@@ -1,6 +1,11 @@
 <?php
-// Ambil data dari controller (DashboardController.php)
-// Variabel $namaPengguna dan $rolePengguna sudah tersedia
+    // Helper untuk keamanan dasar output
+    function e($string) {
+        return htmlspecialchars($string ?? '', ENT_QUOTES, 'UTF-8');
+    }
+    // Ambil nama pengguna dari data yang dikirim Controller (DashboardController.php)
+    // Variabel $namaPengguna sudah tersedia
+    $namaVendor = $namaPengguna ?? 'Vendor'; // Default 'Vendor' jika tidak ada
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -13,42 +18,48 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <style>
+        /* Styling dasar dan scrollbar (Sama seperti barang_vendor.php) */
         body { font-family: 'Poppins', sans-serif; }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #c4c4c4; border-radius: 6px; }
         ::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
+        /* Style tambahan untuk input number (opsional) */
+        input[type='number']::-webkit-inner-spin-button,
+        input[type='number']::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type='number'] { -moz-appearance: textfield; }
     </style>
     <script>
-        // Konfigurasi Tailwind (sesuaikan warna dengan mockup pesanan)
+        // Konfigurasi Tailwind (SAMA DENGAN barang_vendor.php)
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: {
+                     colors: {
                         'brand-blue': '#1E3A5F', // Biru gelap sidebar
                         'brand-yellow': '#FFBE00', // Kuning aktif
                         'brand-gray': '#F8F9FA', // Background abu konten
                         'sidebar-text': '#FFFFFF', // Teks putih sidebar
                         'sidebar-hover': '#2a528a', // Hover biru lebih terang
                         'header-bg': '#FFFFFF', // Background header putih
-                        'button-detail': '#E5E7EB',
-                        'button-detail-hover': '#D1D5DB'
+                        'button-detail': '#E5E7EB', // Warna tambahan jika perlu
+                        'button-detail-hover': '#D1D5DB' // Warna tambahan jika perlu
                     }
                 }
             }
         }
     </script>
+    <script src="//unpkg.com/alpinejs" defer></script>
 </head>
 <body class="bg-brand-gray">
 
     <div class="flex h-screen overflow-hidden">
-        
+
         <aside class="w-64 bg-brand-blue text-sidebar-text shadow-lg flex flex-col justify-between">
             <div>
-                <div class="h-20 flex items-center justify-center p-4 border-b border-gray-700/50">
-                    <img src="src/logo-siap.png" alt="Logo SIAP Mendaki Putih" class="h-36"> 
+                 <div class="h-20 flex items-center justify-center p-4 border-b border-gray-700/50">
+                    <img src="src/logo-siap.png" alt="Logo SIAP Mendaki Putih" class="h-36">
                 </div>
                 <nav class="mt-4 px-3 space-y-1">
                     <a href="index.php?c=DashboardController&m=index" class="flex items-center px-4 py-2.5 rounded-lg bg-brand-yellow text-brand-blue font-semibold transition-colors duration-200 group">
@@ -56,7 +67,7 @@
                         Beranda
                     </a>
                     <a href="index.php?c=BarangController&m=index" class="flex items-center px-4 py-2.5 rounded-lg text-sidebar-text/80 hover:bg-sidebar-hover hover:text-white transition-colors duration-200 group">
-                        <svg class="w-5 h-5 mr-3 opacity-75 group-hover:opacity-100" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z" /></svg>
+                         <svg class="w-5 h-5 mr-3 opacity-75 group-hover:opacity-100" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z" /></svg>
                         Barang
                     </a>
                     <a href="index.php?c=PesananController&m=index" class="flex items-center px-4 py-2.5 rounded-lg text-sidebar-text/80 hover:bg-sidebar-hover hover:text-white transition-colors duration-200 group">
@@ -67,7 +78,7 @@
                        <svg class="w-5 h-5 mr-3 opacity-75 group-hover:opacity-100" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" /></svg>
                         Notifikasi
                     </a>
-                    <a href="#" class="flex items-center px-4 py-2.5 rounded-lg text-sidebar-text/80 hover:bg-sidebar-hover hover:text-white transition-colors duration-200 group">
+                    <a href="index.php?c=ProfileController&m=index" class="flex items-center px-4 py-2.5 rounded-lg text-sidebar-text/80 hover:bg-sidebar-hover hover:text-white transition-colors duration-200 group">
                         <svg class="w-5 h-5 mr-3 opacity-75 group-hover:opacity-100" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0M3.75 18H7.5m3-6h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0M3.75 12H7.5" /></svg>
                         Pengaturan
                     </a>
@@ -80,24 +91,45 @@
                 </a>
             </div>
         </aside>
-        <main class="flex-1 overflow-y-auto bg-white"> <header class="h-16 bg-header-bg flex items-center justify-between px-6 border-b">
+        <main class="flex-1 overflow-y-auto bg-white">
+
+             <header class="h-16 bg-header-bg flex items-center justify-between px-6 border-b sticky top-0 z-10">
                  <div class="relative">
                     <input type="text" placeholder="Telusuri..." class="w-80 px-4 py-2 pl-10 bg-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-brand-yellow text-sm">
                      <svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" /></svg>
                 </div>
                  <div class="flex items-center space-x-5">
                     <button class="text-gray-500 hover:text-gray-700 relative">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 0 1 1.037-.443 48.282 48.282 0 0 0 5.68-.494c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" /></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" /></svg>
                         <span class="absolute -top-1 -right-1 flex h-3 w-3"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span></span>
                     </button>
-                    <div class="flex items-center cursor-pointer group">
-                         <span class="w-9 h-9 bg-brand-blue rounded-full flex items-center justify-center text-white text-sm font-semibold mr-2"><?php echo strtoupper(substr(htmlspecialchars($namaPengguna ?? 'V'), 0, 1)); ?></span>
-                        <span class="text-sm font-medium text-gray-700 group-hover:text-brand-blue"><?php echo htmlspecialchars($namaPengguna ?? 'Nama Toko'); ?></span>
-                        <svg class="w-4 h-4 text-gray-400 ml-1 group-hover:text-brand-blue" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
-                    </div>
+
+                     <div class="relative inline-block text-left" x-data="{ open: false }" @click.away="open = false">
+                        <button @click="open = !open" type="button" class="flex items-center cursor-pointer group">
+                             <span class="w-9 h-9 bg-brand-blue rounded-full flex items-center justify-center text-white text-sm font-semibold mr-2"><?php echo strtoupper(substr(e($namaVendor), 0, 1)); ?></span>
+                            <span class="text-sm font-medium text-gray-700 group-hover:text-brand-blue"><?php echo e($namaVendor); ?></span>
+                            <svg class="w-4 h-4 text-gray-400 ml-1 group-hover:text-brand-blue" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+                        </button>
+                        <div x-show="open"
+                             x-transition:enter="transition ease-out duration-100"
+                             x-transition:enter-start="transform opacity-0 scale-95"
+                             x-transition:enter-end="transform opacity-100 scale-100"
+                             x-transition:leave="transition ease-in duration-75"
+                             x-transition:leave-start="transform opacity-100 scale-100"
+                             x-transition:leave-end="transform opacity-0 scale-95"
+                             class="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-20"
+                             style="display: none;"> <div class="py-1">
+                                <a href="index.php?c=ProfileController&m=index" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    Edit Profil
+                                </a>
+                                <a href="index.php?c=AuthController&m=logout" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                    Logout
+                                </a>
+                            </div>
+                        </div>
+                    </div> 
                 </div>
             </header>
-
             <div class="p-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <div class="bg-white p-5 rounded-lg shadow-md flex items-center space-x-4 border border-gray-200">
@@ -130,6 +162,7 @@
                     <div class="bg-white p-5 rounded-lg shadow-md border border-gray-200">
                         </div>
                 </div>
+
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
                      <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md border border-gray-200">
                         <h3 class="text-lg font-semibold text-gray-800 mb-4">Trend Penyewaan</h3>
@@ -148,6 +181,7 @@
                         <canvas id="productStatsChart"></canvas>
                     </div>
                 </div>
+
                  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
                     <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md border border-gray-200">
                         <h3 class="text-lg font-semibold text-gray-800 mb-4">Ringkasan Pesanan</h3>
@@ -196,69 +230,24 @@
                          </div>
                     </div>
                 </div>
-            </div>
-        </main>
-        </div>
+            </div> </main>
+    </div>
 
     <script>
-        // Data & Konfigurasi Chart.js (Sama seperti sebelumnya)
+        // Data & Konfigurasi Chart.js (Sama seperti kode asli Anda)
         document.addEventListener('DOMContentLoaded', () => {
              const trendCtx = document.getElementById('trendChart')?.getContext('2d');
              if (trendCtx) {
-                 new Chart(trendCtx, { /* ... Konfigurasi chart ... */
+                 new Chart(trendCtx, {
                      type: 'line', data: { labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'], datasets: [{ label: 'Current Month', data: [65, 59, 80, 81, 85, 90], borderColor: '#3B82F6', backgroundColor: 'rgba(59, 130, 246, 0.1)', fill: true, tension: 0.4 }, { label: 'Last Month', data: [50, 55, 60, 65, 60, 68], borderColor: '#FFBE00', backgroundColor: 'rgba(255, 190, 0, 0.1)', fill: true, tension: 0.4 }] }, options: { responsive: true, scales: { y: { beginAtZero: false, suggestedMin: 40 } }, plugins: { legend: { display: false } } }
                  });
              }
             const productCtx = document.getElementById('productStatsChart')?.getContext('2d');
             if(productCtx) {
-                new Chart(productCtx, { /* ... Konfigurasi chart ... */
+                new Chart(productCtx, {
                      type: 'bar', data: { labels: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu'], datasets: [{ label: 'This Week', data: [12, 19, 13, 15, 12], backgroundColor: '#FFBE00', borderRadius: 4 }, { label: 'Last Week', data: [8, 15, 7, 9, 10], backgroundColor: '#93C5FD', borderRadius: 4 }] }, options: { responsive: true, scales: { y: { beginAtZero: true } }, plugins: { legend: { display: false } } }
                 });
             }
-        });
-        document.addEventListener('DOMContentLoaded', function () {
-            // --- Logika Dropdown User Menu ---
-            const userMenuButton = document.getElementById('user-menu-button');
-            const userMenu = document.getElementById('user-menu');
-
-            if (userMenuButton && userMenu) {
-                userMenuButton.addEventListener('click', (event) => {
-                    // Mencegah event click menyebar ke document listener di bawah
-                    event.stopPropagation(); 
-                    userMenu.classList.toggle('hidden');
-                });
-
-                // Menutup dropdown jika diklik di mana saja di luar menu
-                document.addEventListener('click', (event) => {
-                    // Periksa apakah klik terjadi di luar tombol DAN di luar menu dropdown
-                    if (!userMenuButton.contains(event.target) && !userMenu.contains(event.target)) {
-                        userMenu.classList.add('hidden');
-                    }
-                });
-
-                 // Menutup dropdown jika tombol Escape ditekan
-                document.addEventListener('keydown', (event) => {
-                    if (event.key === 'Escape' && !userMenu.classList.contains('hidden')) {
-                         userMenu.classList.add('hidden');
-                    }
-                });
-
-            } else {
-                console.error("User menu button or dropdown element not found."); // Pesan error jika elemen tidak ada
-            }
-
-            // ... (Kode JavaScript lain seperti Alert, Carousel, Litepicker, dll. tetap di sini) ...
-
-            // --- Logika Alert ---
-            function showAlert(message, type = 'success') { /* ... (fungsi showAlert sama) ... */ }
-            // Tampilkan pesan PHP
-            <?php if (isset($error_message) && $error_message): ?> showAlert('<?php echo addslashes($error_message); ?>', 'error'); <?php endif; ?>
-            <?php if (isset($success_message) && $success_message): ?> showAlert('<?php echo addslashes($success_message); ?>', 'success'); <?php endif; ?>
-             <?php if (isset($info_message) && $info_message): ?> showAlert('<?php echo addslashes($info_message); ?>', 'info'); <?php endif; ?>
-
-            // --- Tambahkan kode JS spesifik halaman lainnya di sini (jika ada) ---
-            // Contoh: Kode Carousel untuk dashboard_vendor.php
-            // Contoh: Kode Modal & Litepicker untuk barang_vendor.php
         });
     </script>
 </body>
