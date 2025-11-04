@@ -1,6 +1,7 @@
 <?php
 // views/detail_produk.php
 // Menggunakan UI dari "Detail Barang.png"
+// MODIFIKASI: Dibuat full-screen di mobile, dan card di desktop
 
 $namaPenyewa = $namaPengguna ?? 'Penyewa';
 $produk = $produk ?? null; // Data ini dikirim dari ProdukController
@@ -35,9 +36,15 @@ function formatRupiah($angka) {
     <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
 
     <style>
+        /* MODIFIKASI: Latar belakang body hanya biru di sm ke atas */
         body { 
             font-family: 'Poppins', sans-serif; 
-            background-color: #1E3A5F; /* Latar belakang gelap seperti di gambar */
+            background-color: #FFFFFF; /* Putih di mobile */
+        }
+        @media (min-width: 640px) {
+            body {
+                background-color: #1E3A5F; /* Biru di desktop */
+            }
         }
         /* Style untuk Litepicker */
         .litepicker { 
@@ -60,7 +67,12 @@ function formatRupiah($angka) {
         }
     </script>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4">
+<!-- 
+  MODIFIKASI <body>:
+  - Menghapus flex, items-center, justify-center, min-h-screen, p-4
+  - Menambahkannya kembali HANYA untuk layar sm (tablet) ke atas.
+-->
+<body class="sm:flex sm:items-center sm:justify-center sm:min-h-screen sm:p-4">
 
     <!-- === NOTIFIKASI ALERT === -->
     <div x-data="{ show: false, message: '', isSuccess: false }"
@@ -82,7 +94,11 @@ function formatRupiah($angka) {
          :class="isSuccess ? 'bg-green-500' : 'bg-red-500'">
         
          <div class="p-4 flex items-center">
-            <!-- Icon (tetap sama) -->
+            <div class="flex-shrink-0">
+                <svg x-show="!isSuccess" class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+            </div>
             <div class="ml-3">
                 <p class="text-sm font-medium text-white" x-text="message"></p>
             </div>
@@ -94,9 +110,13 @@ function formatRupiah($angka) {
     <!-- === AKHIR NOTIFIKASI ALERT === -->
 
     <?php if ($produk): ?>
-    <!-- Card Detail Barang -->
+    <!-- 
+      MODIFIKASI Card Detail Barang:
+      - Dibuat full-screen (min-h-screen) di mobile
+      - Dibuat jadi card (sm:rounded-2xl, sm:shadow-2xl, sm:max-w-md, sm:min-h-0) di desktop
+    -->
     <div 
-        class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative" 
+        class="bg-white w-full min-h-screen p-6 relative sm:rounded-2xl sm:shadow-2xl sm:min-h-0 sm:max-w-md" 
         x-data="{ 
             qty: 1, 
             stok: <?php echo $produk['stok_barang'] ?? 1; ?>,
@@ -125,8 +145,8 @@ function formatRupiah($angka) {
             });
         "
     >
-        <!-- Tombol Close -->
-        <a href="javascript:history.back()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+        <!-- Tombol Close (Kembali ke halaman dashboard) -->
+        <a href="index.php?c=DashboardController&m=index" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
             </svg>
@@ -143,9 +163,9 @@ function formatRupiah($angka) {
                 <div class="h-16 bg-brand-gray rounded flex items-center justify-center text-gray-500">
                     <img src="<?php echo htmlspecialchars($produk['url_foto'] ?? 'https://placehold.co/100/e2e8f0/cbd5e1?text=Foto+1'); ?>" alt="Foto 1" class="w-full h-full object-cover rounded">
                 </div>
-                <div class="h-16 bg-brand-gray rounded flex items-center justify-center text-gray-500">Foto 2</div>
-                <div class="h-16 bg-brand-gray rounded flex items-center justify-center text-gray-500">Foto 3</div>
-                <div class="h-16 bg-brand-gray rounded flex items-center justify-center text-gray-500">Foto 4</div>
+                <div class="h-16 bg-brand-gray rounded flex items-center justify-center text-gray-500 text-xs">Foto 2</div>
+                <div class="h-16 bg-brand-gray rounded flex items-center justify-center text-gray-500 text-xs">Foto 3</div>
+                <div class="h-16 bg-brand-gray rounded flex items-center justify-center text-gray-500 text-xs">Foto 4</div>
             </div>
         </div>
 
@@ -203,9 +223,10 @@ function formatRupiah($angka) {
         <!-- Form ini akan mengirim data ke OrderController -->
         <form action="index.php" method="GET" @submit.prevent="
             if (!tglMulai) {
-                picker.show(); // Tampilkan paksa kalender jika tanggal kosong
+                // Jika tanggal belum dipilih, tampilkan paksa kalender
+                picker.show(); 
             } else {
-                // Set nilai input tersembunyi sebelum submit
+                // Jika tanggal SUDAH dipilih, isi input tersembunyi dan kirim
                 document.getElementById('form_qty').value = qty;
                 document.getElementById('form_tgl_mulai').value = tglMulai;
                 document.getElementById('form_tgl_selesai').value = tglSelesai;
