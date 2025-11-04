@@ -9,6 +9,7 @@ class OrderController extends Controller {
     public function __construct() {
         // Cek login
         if (!isset($_SESSION['user_id'])) {
+             $_SESSION['error_message'] = 'Anda harus login terlebih dahulu.';
              $this->redirect('AuthController', 'loginView');
         }
         
@@ -24,6 +25,7 @@ class OrderController extends Controller {
 
     /**
      * Menampilkan halaman checkout (sesuai gambar PNG).
+     * Ini adalah halaman "Pemesanan.png"
      */
     public function checkoutView() {
         $id_barang = $_GET['id'] ?? null;
@@ -31,10 +33,13 @@ class OrderController extends Controller {
         $tgl_selesai = $_GET['tgl_selesai'] ?? null;
         $qty = $_GET['qty'] ?? 1;
 
-        if (!$id_barang || !$tgl_mulai || !$tgl_selesai) {
-            $_SESSION['error_message'] = 'Detail pemesanan tidak lengkap. Silakan pilih tanggal sewa.';
-            // Kembali ke detail produk jika tanggal tidak lengkap
-            $this->redirect('ProdukController', 'detail', ['id' => $id_barang]);
+        // Validasi input dari halaman detail
+        if (!$id_barang || !$tgl_mulai || !$tgl_selesai || $qty <= 0) {
+            $_SESSION['error_message'] = 'Detail pemesanan tidak lengkap. Silakan pilih tanggal sewa terlebih dahulu.';
+            // Redirect kembali ke halaman detail produk
+            // Cek dulu apakah ID barang ada sebelum di-redirect
+            $redirectParams = $id_barang ? ['id' => $id_barang] : [];
+            $this->redirect('ProdukController', 'detail', $redirectParams);
         }
 
         $produk = $this->produkModel->getProdukById($id_barang);
@@ -57,6 +62,12 @@ class OrderController extends Controller {
              $_SESSION['error_message'] = 'Tanggal sewa tidak valid.';
              $this->redirect('ProdukController', 'detail', ['id' => $id_barang]);
         }
+
+        // Cek stok
+        if ($qty > $produk['stok_barang']) {
+             $_SESSION['error_message'] = 'Jumlah sewa melebihi stok yang tersedia (Stok: ' . $produk['stok_barang'] . ').';
+             $this->redirect('ProdukController', 'detail', ['id' => $id_barang]);
+        }
         
         $subtotal = ($produk['harga_sewa'] * $qty) * $interval;
 
@@ -75,7 +86,7 @@ class OrderController extends Controller {
     }
     
     /**
-     * Memproses pesanan dari halaman checkout.
+     * Memproses pesanan dari halaman checkout (setelah modal dikonfirmasi).
      */
     public function processOrder() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -86,18 +97,24 @@ class OrderController extends Controller {
         $data = [
             'id_penyewa' => $_SESSION['user_id'],
             'id_barang' => $_POST['id_barang'] ?? null,
+            'id_vendor' => $_POST['id_vendor'] ?? null, // Kita perlu ini
             'tgl_mulai' => $_POST['tgl_mulai'] ?? null,
             'tgl_selesai' => $_POST['tgl_selesai'] ?? null,
             'total_harga' => $_POST['total_harga'] ?? 0,
-            'metode_pembayaran' => $_POST['metode_pembayaran'] ?? null,
-            'qty' => $_POST['qty'] ?? 1 // Ambil qty juga
+            'metode_pembayaran' => $_POST['metode_pembayaran'] ?? null
+            // Qty bisa ditambahkan jika skema DB mendukung
         ];
 
         // Validasi sederhana
-        if (empty($data['id_barang']) || empty($data['tgl_mulai']) || empty($data['tgl_selesai']) || empty($data['metode_pembayaran'])) {
+        if (empty($data['id_barang']) || empty($data['tgl_mulai']) || empty($data['tgl_selesai']) || empty($data['metode_pembayaran']) || empty($data['id_vendor'])) {
              $_SESSION['error_message'] = 'Data pesanan tidak lengkap. Gagal memproses.';
-             // Redirect kembali ke halaman checkout (butuh parameter lagi)
-             $this->redirect('ProdukController', 'detail', ['id' => $data['id_barang']]);
+             // Redirect kembali ke halaman checkout
+             $this->redirect('OrderController', 'checkoutView', [
+                'id' => $data['id_barang'], 
+                'tgl_mulai' => $data['tgl_mulai'], 
+                'tgl_selesai' => $data['tgl_selesai'],
+                'qty' => $_POST['qty'] ?? 1 // Kirim ulang qty
+             ]);
         }
         
         // Simpan ke DB
@@ -105,6 +122,7 @@ class OrderController extends Controller {
 
         if ($id_pemesanan_baru) {
             // Berhasil, redirect ke halaman pembayaran
+            $_SESSION['success_message'] = 'Pesanan berhasil dibuat! Silakan selesaikan pembayaran.';
             $this->redirect('OrderController', 'paymentView', [
                 'id' => $id_pemesanan_baru,
                 'metode' => $data['metode_pembayaran']
