@@ -62,7 +62,6 @@ $queryAktif = $_GET['q'] ?? null;
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Script Alpine.js untuk dropdown interaktif -->
     <script src="//unpkg.com/alpinejs" defer></script>
     
     <style>
@@ -103,16 +102,12 @@ $queryAktif = $_GET['q'] ?? null;
 </head>
 <body class="bg-white">
 
-    <!-- HEADER / NAVBAR -->
     <header class="bg-white shadow-md sticky top-0 z-50">
         <nav class="container mx-auto px-4 lg:px-6 py-4 flex justify-between items-center">
-            <!-- Logo -->
             <a href="index.php?c=DashboardController&m=index" class="flex items-center">
                  <img src="src/logo-siap.png" class="h-10 mr-3" alt="Logo SIAP Mendaki" />
-                 <!-- <span class="text-xl font-bold text-brand-blue">SIAP Mendaki</span> -->
-            </a>
+                 </a>
 
-            <!-- Menu Desktop -->
             <ul class="hidden md:flex items-center space-x-8 font-medium">
                 <?php foreach ($navItems as $pageKey => $pageName): ?>
                 <li>
@@ -124,15 +119,13 @@ $queryAktif = $_GET['q'] ?? null;
                 <?php endforeach; ?>
             </ul>
 
-            <!-- Ikon Kanan & Dropdown Profil -->
             <div class="flex items-center space-x-4">
                 <button class="text-gray-500 hover:text-brand-blue relative p-1">
                     <span class="sr-only">Notifikasi</span>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
                     </svg>
-                    <!-- <span class="absolute top-0 right-0 flex h-3 w-3"><span class="relative inline-flex rounded-full h-3 w-3 bg-red-500 ring-1 ring-white"></span></span> -->
-                 </button>
+                    </button>
                  <button class="text-gray-500 hover:text-brand-blue p-1">
                      <span class="sr-only">Favorit</span>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -146,7 +139,6 @@ $queryAktif = $_GET['q'] ?? null;
                     </svg>
                  </button>
 
-                <!-- Profile Dropdown -->
                 <div class="relative">
                     <button id="user-menu-button" class="flex items-center text-sm font-medium text-gray-700 hover:text-brand-blue focus:outline-none">
                          <span class="w-9 h-9 bg-brand-blue rounded-full flex items-center justify-center text-white text-sm font-semibold mr-2">
@@ -157,7 +149,6 @@ $queryAktif = $_GET['q'] ?? null;
                             <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 0 1 1.414 0L10 10.586l3.293-3.293a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 0-1.414z" clip-rule="evenodd" />
                         </svg>
                     </button>
-                    <!-- Dropdown Menu -->
                     <div id="user-menu" class="hidden absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                         <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profil Anda</a>
                         <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Pesanan Saya</a>
@@ -165,7 +156,6 @@ $queryAktif = $_GET['q'] ?? null;
                     </div>
                 </div>
 
-                 <!-- Tombol Mobile Menu -->
                  <button id="mobile-menu-button" class="md:hidden text-gray-500 hover:text-brand-blue focus:outline-none">
                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
@@ -174,7 +164,6 @@ $queryAktif = $_GET['q'] ?? null;
             </div>
         </nav>
         
-        <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg">
             <ul class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                  <?php foreach ($navItems as $pageKey => $pageName): ?>
@@ -189,7 +178,6 @@ $queryAktif = $_GET['q'] ?? null;
         </div>
     </header>
 
-    <!-- KONTEN UTAMA -->
     <main class="container mx-auto px-4 lg:px-6 py-6">
 
         <?php
@@ -201,10 +189,7 @@ $queryAktif = $_GET['q'] ?? null;
             // ===================================
             case 'beranda':
         ?>
-            <!-- Search Bar (sesuai gambar) -->
-            <!-- MODIFIKASI: Dibungkus dengan <form> -->
             <form action="index.php" method="GET" class="mb-6">
-                <!-- Data tersembunyi untuk routing -->
                 <input type="hidden" name="c" value="DashboardController">
                 <input type="hidden" name="m" value="index">
                 <input type="hidden" name="page" value="beranda">
@@ -213,23 +198,19 @@ $queryAktif = $_GET['q'] ?? null;
             
                 <div class="flex items-center gap-3">
                     <div class="relative flex-grow">
-                         <!-- MODIFIKASI: Tambah name="q" dan value="$queryAktif" -->
                          <input type="text" name="q" value="<?php echo htmlspecialchars($queryAktif ?? ''); ?>" placeholder="Cari alat pendakian (Contoh: Tenda, Carrier)" class="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-blue text-sm">
                          <svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                          </svg>
                     </div>
                     
-                    <!-- Filter Button & Dropdown -->
                     <div x-data="{ open: false }" class="relative">
-                        <!-- Tombol Filter - MODIFIKASI: type="button" agar tidak submit form -->
                         <button type="button" @click="open = !open" class="p-3 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-100 focus:outline-none">
                             <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                               <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0M3.75 18H7.5m3-6h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0M3.75 12H7.5" />
                             </svg>
                         </button>
                         
-                        <!-- Dropdown Menu -->
                         <div x-show="open" 
                              @click.away="open = false"
                              x-transition:enter="transition ease-out duration-100"
@@ -257,16 +238,13 @@ $queryAktif = $_GET['q'] ?? null;
                                             ? 'bg-brand-blue text-white' 
                                             : 'bg-gray-200 text-gray-700 hover:bg-gray-300';
                                         ?>
-                                        <!-- MODIFIKASI: Ubah <a> jadi <button type="submit"> -->
                                         <button type="submit" name="lokasi" value="<?php echo $lokasi; ?>"
                                            class="px-4 py-1.5 rounded-full text-sm font-medium transition-colors <?php echo $class; ?>">
                                             <?php echo $lokasi; ?>
                                         </button>
                                     <?php endforeach; ?>
                                     
-                                    <!-- Tombol Reset -->
                                     <?php if ($lokasiAktif): ?>
-                                    <!-- MODIFIKASI: Ubah <a> jadi <button type="submit"> -->
                                     <button type="submit" name="lokasi" value=""
                                        class="px-4 py-1.5 rounded-full text-sm font-medium text-red-600 hover:bg-red-50 transition-colors">
                                         Reset
@@ -276,12 +254,8 @@ $queryAktif = $_GET['q'] ?? null;
                             </div>
                         </div>
                     </div>
-                    <!-- End Filter -->
-                </div>
+                    </div>
             </form>
-            <!-- End Search/Filter Form -->
-            
-            <!-- Hero Banner -->
             <div class="mb-8 rounded-lg overflow-hidden relative h-64 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2070&auto=format&fit=crop');">
                 <div class="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-center items-start p-8 md:p-12">
                     <h1 class="text-white text-3xl md:text-4xl font-bold mb-2 leading-tight">DISKON SPESIAL!</h1>
@@ -289,10 +263,8 @@ $queryAktif = $_GET['q'] ?? null;
                 </div>
             </div>
 
-            <!-- Bagian Produk Terlaris -->
             <section class="mb-8">
-<!-- ... (Rest of Produk Terlaris section remains the same) ... -->
-                <div class="flex justify-between items-center mb-4">
+<div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-semibold text-gray-800">Produk Terlaris</h2>
                     <div class="flex space-x-2">
                         <button class="carousel-prev-terlaris bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-full disabled:opacity-50">
@@ -331,10 +303,8 @@ $queryAktif = $_GET['q'] ?? null;
                 </div>
             </section>
 
-            <!-- Bagian Rekomendasi -->
             <section>
-<!-- ... (Rest of Rekomendasi section remains the same) ... -->
-                 <div class="flex justify-between items-center mb-4">
+<div class="flex justify-between items-center mb-4">
                      <h2 class="text-xl font-semibold text-gray-800">Rekomendasi untuk Anda</h2>
                      <div class="flex space-x-2">
                         <button class="carousel-prev-rekomendasi bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-full disabled:opacity-50">
@@ -390,7 +360,6 @@ $queryAktif = $_GET['q'] ?? null;
                         <p>Dengan SIAP Mendaki, Anda tidak only menyewa alat, tapi juga mendapatkan ketenangan pikiran. Setiap vendor terverifikasi, setiap transaksi aman, dan setiap perlengkapan siap mengantar Anda ke puncak impian.</p>
                     </div>
                     <div class="lg:w-1/2">
-                        <!-- GAMBAR LOKAL UNTUK TENTANG KAMI -->
                         <img src="src/tentang-kami.jpg" alt="Petualang melihat pemandangan gunung" class="rounded-lg shadow-lg object-cover w-full h-80" onerror="this.src='https://placehold.co/600x400/1E3A5F/FFFFFF?text=Tentang+Kami'">
                     </div>
                 </div>
@@ -404,7 +373,6 @@ $queryAktif = $_GET['q'] ?? null;
             case 'produk':
         ?>
             <div class="bg-white">
-                <!-- Form Pencarian untuk Halaman Produk -->
                 <form action="index.php" method="GET" class="mb-6">
                     <input type="hidden" name="c" value="DashboardController">
                     <input type="hidden" name="m" value="index">
@@ -424,14 +392,11 @@ $queryAktif = $_GET['q'] ?? null;
                         </button>
                     </div>
                 </form>
-                <!-- End Form Pencarian -->
-
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     <?php if (empty($semuaProduk)): ?>
                         <p class="text-gray-500 italic col-span-full">Tidak ada produk yang cocok dengan pencarian Anda.</p>
                     <?php else: ?>
                         <?php foreach ($semuaProduk as $produk): ?>
-                        <!-- Card Produk (Template sama seperti di beranda) -->
                         <a href="index.php?c=ProdukController&m=detail&id=<?php echo $produk['id_barang']; ?>" class="block bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden group">
                             <img src="<?php echo htmlspecialchars($produk['url_foto'] ?? 'https://placehold.co/300x200/e2e8f0/cbd5e1?text=SIAP'); ?>" alt="<?php echo htmlspecialchars($produk['nama_barang']); ?>" class="w-full h-48 object-cover">
                             <div class="p-4">
@@ -464,9 +429,7 @@ $queryAktif = $_GET['q'] ?? null;
                 <h1 class="text-3xl font-bold text-brand-blue mb-6">Lokasi Vendor Kami</h1>
                 <p class="text-gray-700 leading-relaxed mb-6">Saat ini, seluruh vendor kami beroperasi dan terpusat di wilayah <strong>Kota Malang</strong>. Temukan kami di area berikut:</p>
                 
-                <!-- Placeholder Peta -->
                 <div class="bg-gray-200 w-full h-96 rounded-lg flex items-center justify-center mb-6 overflow-hidden">
-                    <!-- GAMBAR LOKAL UNTUK LOKASI -->
                     <img src="src/lokasi-malang.jpg" alt="Tugu Balai Kota Malang" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/800x400/1E3A5F/FFFFFF?text=Lokasi+Malang'">
                 </div>
 
@@ -487,50 +450,19 @@ $queryAktif = $_GET['q'] ?? null;
 
     </main>
 
-    <!-- FOOTER -->
-    <footer class="bg-brand-gray border-t mt-12">
-<!-- ... (Footer section remains the same) ... -->
-        <div class="container mx-auto px-4 lg:px-6 py-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-gray-600">
-                <div>
-                    <h3 class="text-lg font-semibold text-brand-blue mb-2">SIAP Mendaki</h3>
-                    <p class="text-sm">Platform #1 untuk sewa perlengkapan pendakian yang aman, mudah, dan terpercaya.</p>
-                </div>
-                <div>
-                    <h3 class="text-lg font-semibold text-brand-blue mb-2">Tautan Cepat</h3>
-                    <ul class="space-y-1 text-sm">
-                        <li><a href="index.php?c=DashboardController&m=index&page=tentang" class="hover:underline">Tentang Kami</a></li>
-                        <li><a href="index.php?c=DashboardController&m=index&page=produk" class="hover:underline">Semua Produk</a></li>
-                        <li><a href="#" class="hover:underline">FAQ</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-lg font-semibold text-brand-blue mb-2">Hubungi Kami</h3>
-                    <ul class="space-y-1 text-sm">
-                        <li>Email: support@siapmendaki.com</li>
-                        <li>Telepon: (021) 123-4567</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="mt-8 border-t border-gray-300 pt-6 text-center text-sm text-gray-500">
-                &copy; <?php echo date("Y"); ?> SIAP Mendaki. All rights reserved.
-            </div>
-        </div>
-    </footer>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // === Dropdown Menu Logic ===
-            const userMenuButton = document.getElementById('user-menu-button');
-            const userMenu = document.getElementById('user-menu');
-            if (userMenuButton && userMenu) {
-                 userMenuButton.addEventListener('click', () => userMenu.classList.toggle('hidden'));
-                 document.addEventListener('click', (event) => {
-                     if (!userMenuButton.contains(event.target) && !userMenu.contains(event.target)) {
-                         userMenu.classList.add('hidden');
-                     }
-                 });
-            }
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                    // === Dropdown Menu Logic ===
+    //             const userMenuButton = document.getElementById('user-menu-button');
+    //             const userMenu = document.getElementById('user-menu');
+    //             if (userMenuButton && userMenu) {
+    //                  userMenuButton.addEventListener('click', () => userMenu.classList.toggle('hidden'));
+    //                  document.addEventListener('click', (event) => {
+    //                      if (!userMenuButton.contains(event.target) && !userMenu.contains(event.target)) {
+    //                          userMenu.classList.add('hidden');
+    //                      }
+    //                  });
+                }
 
             // === Mobile Menu Logic ===
             const mobileMenuButton = document.getElementById('mobile-menu-button');
@@ -575,4 +507,3 @@ $queryAktif = $_GET['q'] ?? null;
     </script>
 </body>
 </html>
-

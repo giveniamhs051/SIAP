@@ -38,6 +38,11 @@ class ProdukController extends Controller {
              $this->redirect('DashboardController', 'index');
         }
         
+        // --- MODIFIKASI DI SINI ---
+        // Ambil juga data jadwal yang sudah dibooking
+        $data['jadwal_booked'] = $this->produkModel->getJadwalBooked($id_barang);
+        // --- AKHIR MODIFIKASI ---
+        
         $data['namaPengguna'] = $_SESSION['user_nama'] ?? 'Penyewa';
 
         // Tampilkan view detail produk

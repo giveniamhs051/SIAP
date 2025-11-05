@@ -30,14 +30,34 @@ class DashboardController extends Controller {
                 $this->loadView('dashboard_vendor', $data);
                 break;
             
-            // --- MODIFIKASI DI SINI ---
+            // --- MODIFIKASI DIMULAI DI SINI ---
             case 'penyewa':
                 // Muat model produk
                 $produkModel = $this->loadModel('ProdukModel');
                 
-                // Ambil data produk (contoh: 4 terlaris, 4 rekomendasi)
-                $data['produkTerlaris'] = $produkModel->getProdukTerbaruAktif(4); // Ambil 4 produk terbaru sebagai 'terlaris'
-                $data['rekomendasiProduk'] = $produkModel->getRekomendasiProduk(4); // Ambil 4 produk acak sebagai 'rekomendasi'
+                // Ambil parameter filter dari URL
+                $query = $_GET['q'] ?? null;
+                $lokasi = $_GET['lokasi'] ?? null;
+                $page = $_GET['page'] ?? 'beranda';
+
+                // Ambil data produk berdasarkan filter
+                $data['produkTerlaris'] = $produkModel->getProdukTerbaruAktif(4, $query, $lokasi);
+                $data['rekomendasiProduk'] = $produkModel->getRekomendasiProduk(4, $query, $lokasi);
+                
+                // Jika halaman 'produk' atau jika ada filter aktif, ambil semua produk
+                if ($page == 'produk' || !empty($query) || !empty($lokasi)) {
+                    $data['semuaProduk'] = $produkModel->getSemuaProduk($query, $lokasi);
+                    
+                    // Jika ada filter, paksa tampilkan halaman 'produk'
+                    if (!empty($query) || !empty($lokasi)) {
+                        $page = 'produk';
+                    }
+                }
+
+                // Kirim data filter aktif ke view
+                $data['currentPage'] = $page;
+                $data['queryAktif'] = $query;
+                $data['lokasiAktif'] = $lokasi;
                 
                 // Muat view dashboard penyewa dengan data produk
                 $this->loadView('dashboard_penyewa', $data); 
