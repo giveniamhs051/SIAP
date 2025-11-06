@@ -48,7 +48,7 @@ $harga_satuan = ($durasi_hari > 0 && $qty > 0) ? ($subtotal / $durasi_hari / $qt
         }
     </script>
 </head>
-<body class="bg-brand-gray" x-data="{ modalOpen: false }">
+<body class="bg-brand-gray" x-data="{ modalOpen: false, successModalOpen: false, selectedPayment: '' }">
 
     <!-- Header (Sama seperti detail_produk.php) -->
     <header class="bg-white shadow-md sticky top-0 z-30">
@@ -105,21 +105,21 @@ $harga_satuan = ($durasi_hari > 0 && $qty > 0) ? ($subtotal / $durasi_hari / $qt
             <h1 class="text-2xl font-semibold text-gray-800 mb-4">Metode Pembayaran</h1>
             <div class="space-y-4 mb-8">
                 <!-- Bank Transfer -->
-                <input type="radio" name="metode_pembayaran" value="Bank Transfer" id="bank_transfer" class="sr-only" required>
+                <input type="radio" name="metode_pembayaran" value="Bank Transfer" id="bank_transfer" class="sr-only" x-model="selectedPayment" required>
                 <label for="bank_transfer" class="flex items-center gap-4 p-5 bg-white rounded-lg shadow-md border-2 border-transparent cursor-pointer transition-all hover:border-gray-300">
                     <img src="https://placehold.co/40x40/EBF8FF/1E3A5F?text=Bank" alt="Bank" class="w-10 h-10 rounded-full">
                     <span class="text-lg font-medium text-gray-700">Bank Transfer</span>
                 </label>
                 
                 <!-- E-wallet -->
-                <input type="radio" name="metode_pembayaran" value="E-wallet" id="e_wallet" class="sr-only">
+                <input type="radio" name="metode_pembayaran" value="Bank Transfer" id="bank_transfer" class="sr-only" x-model="selectedPayment" required>
                 <label for="e_wallet" class="flex items-center gap-4 p-5 bg-white rounded-lg shadow-md border-2 border-transparent cursor-pointer transition-all hover:border-gray-300">
                     <img src="https://placehold.co/40x40/FFFBEB/D97706?text=E" alt="E-wallet" class="w-10 h-10 rounded-full">
                     <span class="text-lg font-medium text-gray-700">E-wallet</span>
                 </label>
 
                 <!-- COD -->
-                <input type="radio" name="metode_pembayaran" value="COD" id="cod" class="sr-only">
+                <input type="radio" name="metode_pembayaran" value="Bank Transfer" id="bank_transfer" class="sr-only" x-model="selectedPayment" required>
                 <label for="cod" class="flex items-center gap-4 p-5 bg-white rounded-lg shadow-md border-2 border-transparent cursor-pointer transition-all hover:border-gray-300">
                      <img src="https://placehold.co/40x40/FEE2E2/DC2626?text=COD" alt="COD" class="w-10 h-10 rounded-full">
                     <span class="text-lg font-medium text-gray-700">Cash on Delivery</span>
@@ -135,6 +135,30 @@ $harga_satuan = ($durasi_hari > 0 && $qty > 0) ? ($subtotal / $durasi_hari / $qt
             </div>
         </form>
     </main>
+
+        <div class="mt-8" x-show="selectedPayment !== ''" x-transition>
+        <h1 class="text-2xl font-semibold text-gray-800 mb-4">Instruksi Pembayaran</h1>
+        
+        <div x-show="selectedPayment === 'Bank Transfer'" class="text-left bg-white border border-gray-200 rounded-lg p-4">
+            <p class="text-sm text-gray-500 mb-1">Silakan transfer ke nomor Virtual Account BNI berikut:</p>
+            <p class="text-2xl font-bold text-gray-800 tracking-wider bg-gray-100 p-3 rounded text-center my-2">
+                VA-1234-<?php echo str_pad($produk['id_barang'] ?? 0, 6, '0', STR_PAD_LEFT); ?>
+            </p>
+        </div>
+
+        <div x-show="selectedPayment === 'E-wallet'" class="text-left bg-white border border-gray-200 rounded-lg p-4">
+            <p class="text-sm text-gray-500 mb-1">Silakan bayar ke nomor OVO/Gopay/Dana berikut:</p>
+            <p class="text-2xl font-bold text-gray-800 tracking-wider bg-gray-100 p-3 rounded text-center my-2">
+                081234567890 (a.n. SIAP Mendaki)
+            </p>
+        </div>
+
+        <div x-show="selectedPayment === 'COD'" class="text-left bg-white border border-gray-200 rounded-lg p-4">
+            <p class="text-sm text-gray-500 mb-1">Silakan siapkan uang tunai dan bayar saat mengambil barang di:</p>
+            <p class="text-lg font-semibold text-gray-800"><?php echo htmlspecialchars($produk['nama_vendor'] ?? 'Nama Vendor'); ?></p>
+            <p class="text-sm text-gray-600"><?php echo htmlspecialchars($produk['alamat_vendor'] ?? 'Alamat Vendor'); ?></p>
+        </div>
+    </div>
 
     <!-- Modal Konfirmasi -->
     <div x-show="modalOpen" 
@@ -171,13 +195,48 @@ $harga_satuan = ($durasi_hari > 0 && $qty > 0) ? ($subtotal / $durasi_hari / $qt
                 </button>
                 <!-- Tombol Lanjut ini yang akan submit form -->
                 <button type="button" 
-                        @click="document.getElementById('checkoutForm').submit()" 
+                        @click="
+                            modalOpen = false; // 1. Tutup modal konfirmasi
+                            successModalOpen = true; // 2. Buka modal sukses baru
+                            
+                            // 3. Set timer 2 detik, lalu submit form
+                            setTimeout(() => {
+                                document.getElementById('checkoutForm').submit();
+                            }, 2000); 
+                        " 
                         class="flex-1 bg-brand-blue text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-opacity-90 transition-opacity text-sm">
                     Lanjut
                 </button>
             </div>
         </div>
     </div>
-    
+
+<div x-show="successModalOpen" 
+         x-cloak
+         class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0">
+        
+        <div class="bg-white rounded-lg shadow-2xl w-full max-w-sm p-6 text-center"
+             x-show="successModalOpen"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 scale-90"
+             x-transition:enter-end="opacity-100 scale-100">
+            
+            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5">
+                <svg class="w-12 h-12 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                </svg>
+            </div>
+
+            <h3 class="text-xl font-semibold text-gray-800 mb-2">Pembayaran Berhasil!</h3>
+            <p class="text-gray-600">Pesanan Anda telah kami terima.</p>
+            
+        </div>
+    </div>
 </body>
 </html>
