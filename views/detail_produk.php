@@ -231,9 +231,9 @@ $js_jadwal_booked = json_encode($jadwal_booked);
                     numberOfMonths: 1,
                     buttonText: { apply: 'Terapkan', reset: 'Reset' },
                     onSelected: function(date1, date2) {
-                        if (date1 && date2) {
-                            tglMulai = date1.format('YYYY-MM-DD');
-                            tglSelesai = date2.format('YYYY-MM-DD');
+                        if (date1 && date2) {
+                            this.tglMulai = date1.format('YYYY-MM-DD');
+                            this.tglSelesai = date2.format('YYYY-MM-DD');
                             
                             // Hitung durasi (diff->days + 1)
                             let d1 = new Date(date1.dateInstance);
@@ -304,18 +304,13 @@ $js_jadwal_booked = json_encode($jadwal_booked);
                     <h2 class="text-lg font-semibold text-gray-800 mb-4">Atur Penyewaan</h2>
                     
                     <form action="index.php" method="GET" @submit.prevent="
-                        if (!tglMulai || !tglSelesai) {
-                            // Jika tanggal belum dipilih, beri peringatan
-                            // Tampilkan notifikasi Alpine
-                            show = true; message = 'Silakan pilih rentang tanggal sewa pada kalender.'; isSuccess = false;
-                            setTimeout(() => show = false, 4000);
-                        } else {
-                            // Jika tanggal SUDAH dipilih, isi input tersembunyi dan kirim
-                            document.getElementById('form_qty').value = qty;
-                            document.getElementById('form_tgl_mulai').value = tglMulai;
-                            document.getElementById('form_tgl_selesai').value = tglSelesai;
-                            $event.target.submit(); // Lanjutkan submit form
-                        }
+                        // LANGSUNG ISI INPUT (biarpun kosong/null)
+                        document.getElementById('form_qty').value = qty;
+                        document.getElementById('form_tgl_mulai').value = tglMulai;
+                        document.getElementById('form_tgl_selesai').value = tglSelesai;
+
+                        // LANGSUNG SUBMIT TANPA IF/ELSE
+                        $event.target.submit();
                     ">
                         <input type="hidden" name="c" value="OrderController">
                         <input type="hidden" name="m" value="checkoutView">
@@ -405,6 +400,5 @@ $js_jadwal_booked = json_encode($jadwal_booked);
              }
         });
     </script>
-
 </body>
 </html>
