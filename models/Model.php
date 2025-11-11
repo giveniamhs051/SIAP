@@ -7,7 +7,7 @@ class Model {
         // --- Konfigurasi Database ---
         $host = 'localhost'; // Host database Anda
         $dbuser = 'root';      // Username database Anda
-        $dbpass = '';          // Password database Anda
+        $dbpass = 'Rahmamalang06';          // Password database Anda
         $dbname = 'siap';      // Nama database SIAP Anda
         $dbport = '3306';      // Port default MySQL di XAMPP
         // -------------------------

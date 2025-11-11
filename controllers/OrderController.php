@@ -34,11 +34,11 @@ class OrderController extends Controller {
         $qty = $_GET['qty'] ?? 1;
 
         // Validasi input dari halaman detail
-        if (!$id_barang || !$tgl_mulai || !$tgl_selesai || $qty <= 0) {
-            $_SESSION['error_message'] = 'Detail pemesanan tidak lengkap. Silakan pilih tanggal sewa terlebih dahulu.';
-            // Redirect kembali ke halaman detail produk
-            // Cek dulu apakah ID barang ada sebelum di-redirect
-            $redirectParams = $id_barang ? ['id' => $id_barang] : [];
+        // Validasi input dari halaman detail
+        if (!$id_barang || $qty <= 0) { // <-- KITA HANYA CEK ID BARANG & QTY
+            $_SESSION['error_message'] = 'Detail pemesanan tidak lengkap.';
+            // ...
+        $redirectParams = $id_barang ? ['id' => $id_barang] : [];
             $this->redirect('ProdukController', 'detail', $redirectParams);
         }
 
@@ -118,48 +118,46 @@ class OrderController extends Controller {
         }
         
         // Simpan ke DB
-        $id_pemesanan_baru = $this->orderModel->createPemesanan($data);
+        $id_pemesanan_baru = $this->orderModel->createPemesanan($data); // <-- TAMBAHKAN BARIS INI KEMBALI
 
         if ($id_pemesanan_baru) {
-            // Berhasil, redirect ke halaman pembayaran
-            $_SESSION['success_message'] = 'Pesanan berhasil dibuat! Silakan selesaikan pembayaran.';
-            $this->redirect('OrderController', 'paymentView', [
-                'id' => $id_pemesanan_baru,
-                'metode' => $data['metode_pembayaran']
-            ]);
+            // Berhasil, redirect ke Dashboard dengan pesan sukses
+            $_SESSION['success_message'] = 'Pembayaran berhasil! Pesanan Anda sedang diproses.';
+            $this->redirect('DashboardController', 'index');
+            
         } else {
             // Gagal
-             $_SESSION['error_message'] = 'Gagal membuat pesanan. Stok mungkin habis atau terjadi error.';
-             $this->redirect('ProdukController', 'detail', ['id' => $data['id_barang']]);
+            $_SESSION['error_message'] = 'Gagal membuat pesanan. Stok mungkin habis atau terjadi error.';
+            $this->redirect('ProdukController', 'detail', ['id' => $data['id_barang']]);
         }
     }
 
     /**
      * Menampilkan halaman pembayaran (setelah checkout).
      */
-    public function paymentView() {
-        $id_pesanan = $_GET['id'] ?? null;
-        $metode = $_GET['metode'] ?? 'Bank Transfer';
+        public function paymentView() {
+            $id_pesanan = $_GET['id'] ?? null;
+            $metode = $_GET['metode'] ?? 'Bank Transfer';
 
-        if (!$id_pesanan) {
-            $this->redirect('DashboardController', 'index');
+            if (!$id_pesanan) {
+                $this->redirect('DashboardController', 'index');
+            }
+
+            // Ambil detail pesanan yang baru dibuat
+            $pesanan = $this->orderModel->getOrderById($id_pesanan, $_SESSION['user_id']);
+
+            if (!$pesanan) {
+                $_SESSION['error_message'] = 'Pesanan tidak ditemukan.';
+                $this->redirect('DashboardController', 'index');
+            }
+
+            $data = [
+                'namaPengguna' => $_SESSION['user_nama'],
+                'pesanan' => $pesanan,
+                'metode_pembayaran' => $metode
+            ];
+
+            $this->loadView('pembayaran_penyewa', $data);
         }
-
-        // Ambil detail pesanan yang baru dibuat
-        $pesanan = $this->orderModel->getOrderById($id_pesanan, $_SESSION['user_id']);
-
-        if (!$pesanan) {
-            $_SESSION['error_message'] = 'Pesanan tidak ditemukan.';
-            $this->redirect('DashboardController', 'index');
-        }
-
-        $data = [
-            'namaPengguna' => $_SESSION['user_nama'],
-            'pesanan' => $pesanan,
-            'metode_pembayaran' => $metode
-        ];
-
-        $this->loadView('pembayaran_penyewa', $data);
     }
-}
-?>
+    ?>
