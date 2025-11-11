@@ -400,8 +400,5 @@ $js_jadwal_booked = json_encode($jadwal_booked);
              }
         });
     </script>
-
-    
-
 </body>
 </html>
