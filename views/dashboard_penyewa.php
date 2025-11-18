@@ -149,11 +149,11 @@ $queryAktif = $_GET['q'] ?? null;
                             <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 0 1 1.414 0L10 10.586l3.293-3.293a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 0-1.414z" clip-rule="evenodd" />
                         </svg>
                     </button>
-                    <div id="user-menu" class="hidden absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profil Anda</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Pesanan Saya</a>
-                        <a href="index.php?c=AuthController&m=logout" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Keluar</a>
-                    </div>
+                <div id="user-menu" class="hidden ...">
+                    <a href="index.php?c=ProfileController&m=index" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profil Anda</a>
+                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Pesanan Saya</a>
+                    <a href="index.php?c=AuthController&m=logout" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Keluar</a>
+                </div>
                 </div>
 
                  <button id="mobile-menu-button" class="md:hidden text-gray-500 hover:text-brand-blue focus:outline-none">
@@ -503,7 +503,7 @@ $queryAktif = $_GET['q'] ?? null;
             // Setup untuk kedua carousel
             setupCarousel('produk-terlaris-container', 'carousel-prev-terlaris', 'carousel-next-terlaris');
             setupCarousel('rekomendasi-produk-container', 'carousel-prev-rekomendasi', 'carousel-next-rekomendasi');
-        });
+        ;
     </script>
 </body>
 </html>
