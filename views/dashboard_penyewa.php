@@ -126,12 +126,12 @@ $queryAktif = $_GET['q'] ?? null;
                       <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
                     </svg>
                     </button>
-                 <button class="text-gray-500 hover:text-brand-blue p-1">
-                     <span class="sr-only">Favorit</span>
+                <a href="index.php?c=FavoritController&m=index" class="text-gray-500 hover:text-brand-blue p-1" title="Daftar Favorit">
+                    <span class="sr-only">Favorit</span>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
                     </svg>
-                 </button>
+                </a>
                  <button class="text-gray-500 hover:text-brand-blue p-1">
                     <span class="sr-only">Keranjang</span>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -139,22 +139,30 @@ $queryAktif = $_GET['q'] ?? null;
                     </svg>
                  </button>
 
-                <div class="relative">
-                    <button id="user-menu-button" class="flex items-center text-sm font-medium text-gray-700 hover:text-brand-blue focus:outline-none">
-                         <span class="w-9 h-9 bg-brand-blue rounded-full flex items-center justify-center text-white text-sm font-semibold mr-2">
-                            <?php echo strtoupper(substr(htmlspecialchars($namaPenyewa), 0, 1)); ?>
-                        </span>
-                        Halo, <?php echo explode(' ', htmlspecialchars($namaPenyewa))[0]; ?>
-                        <svg class="ml-1 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 0 1 1.414 0L10 10.586l3.293-3.293a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 0-1.414z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-                <div id="user-menu" class="hidden ...">
-                    <a href="index.php?c=ProfileController&m=index" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profil Anda</a>
-                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Pesanan Saya</a>
-                    <a href="index.php?c=AuthController&m=logout" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Keluar</a>
-                </div>
-                </div>
+               <div class="relative" x-data="{ open: false }">
+    <button @click="open = !open" @keydown.escape.window="open = false" id="user-menu-button" class="flex items-center text-sm font-medium text-gray-700 hover:text-brand-blue focus:outline-none">
+         <span class="w-9 h-9 bg-brand-blue rounded-full flex items-center justify-center text-white text-sm font-semibold mr-2">
+            <?php echo strtoupper(substr(htmlspecialchars($namaPenyewa), 0, 1)); ?>
+        </span>
+        Halo, <?php echo explode(' ', htmlspecialchars($namaPenyewa))[0]; ?>
+        <svg class="ml-1 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 0 1 1.414 0L10 10.586l3.293-3.293a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 0-1.414z" clip-rule="evenodd" />
+        </svg>
+    </button>
+
+    <div x-show="open" 
+         @click.outside="open = false" 
+         x-transition 
+         x-cloak
+         id="user-menu" 
+         class="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+        
+        <a href="index.php?c=ProfileController&m=index" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profil Anda</a>
+        
+        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Pesanan Saya</a>
+        <a href="index.php?c=AuthController&m=logout" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Keluar</a>
+    </div>
+</div>
 
                  <button id="mobile-menu-button" class="md:hidden text-gray-500 hover:text-brand-blue focus:outline-none">
                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -291,9 +299,22 @@ $queryAktif = $_GET['q'] ?? null;
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-3 h-3 mr-1"><path fill-rule="evenodd" d="M8 1.75a.75.75 0 0 1 .75.75v2.5a.75.75 0 0 1-1.5 0V2.5A.75.75 0 0 1 8 1.75ZM6.25 5a.75.75 0 0 0 0 1.5h3.5a.75.75 0 0 0 0-1.5h-3.5ZM4.5 8a.75.75 0 0 0 0 1.5h7a.75.75 0 0 0 0-1.5h-7ZM3 10.75a.75.75 0 0 1 .75-.75h10.5a.75.75 0 0 1 0 1.5H3.75a.75.75 0 0 1-.75-.75Z" clip-rule="evenodd" /></svg>
                                             <?php echo htmlspecialchars(getCityFromAddress($produk['alamat_vendor'])); ?>
                                         </span>
-                                        <button class="hover:text-red-500 p-1 -m-1">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" /></svg>
-                                        </button>
+                                    <?php 
+                                        // Pastikan $favoritIds ada (didefinisikan oleh Controller)
+                                        $favoritIds = $favoritIds ?? []; 
+                                        $isFavorited = in_array($produk['id_barang'], $favoritIds);
+                                    ?>
+                                    <a href="index.php?c=FavoritController&m=toggle&id=<?php echo $produk['id_barang']; ?>" class="p-1 -m-1 z-10 relative" title="<?php echo $isFavorited ? 'Hapus dari favorit' : 'Tambah ke favorit'; ?>">
+                                        <?php if ($isFavorited): ?>
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-red-500">
+                                            <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.614 3 7.5 3c1.74 0 3.333.92 4.313 2.311.98-1.391 2.573-2.311 4.313-2.311 2.886 0 5.25 2.322 5.25 5.25 0 3.924-2.438 7.11-4.789 9.27a25.178 25.178 0 01-4.244 3.17 15.247 15.247 0 01-.383.218l-.022.012-.007.004-.004.001a.752.752 0 01-.21.035z" />
+                                            </svg>
+                                        <?php else: ?>
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-400 group-hover:text-red-500">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                                            </svg>
+                                        <?php endif; ?>
+                                    </a>
                                     </div>
                                 </div>
                             </a>
@@ -462,7 +483,7 @@ $queryAktif = $_GET['q'] ?? null;
     //                          userMenu.classList.add('hidden');
     //                      }
     //                  });
-                }
+    //            }
 
             // === Mobile Menu Logic ===
             const mobileMenuButton = document.getElementById('mobile-menu-button');
@@ -503,7 +524,7 @@ $queryAktif = $_GET['q'] ?? null;
             // Setup untuk kedua carousel
             setupCarousel('produk-terlaris-container', 'carousel-prev-terlaris', 'carousel-next-terlaris');
             setupCarousel('rekomendasi-produk-container', 'carousel-prev-rekomendasi', 'carousel-next-rekomendasi');
-        ;
+            });
     </script>
 </body>
 </html>

@@ -5,10 +5,11 @@
 class AuthController extends Controller {
 
     private $authModel; // Properti untuk menyimpan instance model
+    private $logModel;
 
     public function __construct() {
-        // Otomatis load AuthModel saat AuthController dibuat
         $this->authModel = $this->loadModel('AuthModel');
+        $this->logModel = $this->loadModel('LogModel'); // Load LogModel
     }
 
     // Menampilkan halaman login
@@ -48,6 +49,9 @@ class AuthController extends Controller {
                 $_SESSION['user_role'] = $user['role'];
                 $_SESSION['user_email'] = $user['email']; // Simpan email juga jika perlu
 
+                //log login
+                $this->logModel->catat("LOGIN", "User login ke sistem");
+
                 // Redirect ke dashboard yang sesuai
                  $this->redirect('DashboardController', 'index');
             } else {
@@ -80,6 +84,12 @@ class AuthController extends Controller {
                 'role' => $_POST['role'] ?? '', // 'penyewa' atau 'vendor'
             ];
 
+             // (Validasi dipersingkat untuk fokus ke logging)
+            if ($data['password'] !== $data['confirm_password']) {
+                $_SESSION['error_message'] = 'Konfirmasi password tidak cocok.';
+                $this->redirect('AuthController', 'registerView');
+            }
+
             // Validasi Input
             if (empty($data['nama']) || empty($data['email']) || empty($data['password']) || empty($data['confirm_password']) || empty($data['role']) || empty($data['nomor_telepon'])) {
                 $_SESSION['error_message'] = 'Semua kolom wajib diisi.';
@@ -97,9 +107,9 @@ class AuthController extends Controller {
                 $_SESSION['error_message'] = 'Konfirmasi password tidak cocok.';
                 $this->redirect('AuthController', 'registerView');
             }
-            if ($data['role'] !== 'penyewa' && $data['role'] !== 'vendor') {
-                 $_SESSION['error_message'] = 'Role tidak valid.';
-                 $this->redirect('AuthController', 'registerView');
+            if ($data['role'] !== 'penyewa' && $data['role'] !== 'vendor' && $data['role'] !== 'admin') {
+                $_SESSION['error_message'] = 'Role tidak valid.';
+                $this->redirect('AuthController', 'registerView');
             }
             
 
@@ -117,6 +127,7 @@ class AuthController extends Controller {
 
             // Coba buat user baru
             if ($this->authModel->createUser($data)) {
+                $this->logModel->catat("REGISTER", "Pendaftaran pengguna baru: " . $data['email']);
                 // Registrasi berhasil
                 $_SESSION['success_message'] = 'Registrasi berhasil! Silakan login.';
                 $this->redirect('AuthController', 'loginView');
@@ -134,6 +145,10 @@ class AuthController extends Controller {
 
     // Proses logout
     public function logout() {
+        // --- CATAT LOG LOGOUT (Sebelum session dihancurkan) ---
+        if (isset($_SESSION['user_nama'])) {
+            $this->logModel->catat("LOGOUT", "User logout dari sistem");
+        }
         // Hapus semua data session
         session_unset();
         session_destroy();

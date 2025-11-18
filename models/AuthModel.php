@@ -77,7 +77,18 @@ class AuthModel extends Model {
                 $data['password'], // Password HARUS sudah di-hash dari controller
                 $data['nomor_telepon']
             ];
-        } else {
+        } elseif ($data['role'] == 'admin') { 
+            // === TAMBAHAN LOGIKA ADMIN ===
+            // Kolom di DB: nama_admin, email_admin, password, no_telepon
+            $sql = "INSERT INTO admin (nama_admin, email_admin, password, no_telepon) VALUES (?, ?, ?, ?)";
+            $bind_params = [
+                $data['nama'],
+                $data['email'],
+                $data['password'], 
+                $data['nomor_telepon']
+            ];
+        }
+        else {
             error_log("CreateUser error: Invalid role provided - " . $data['role']);
             return false; // Role tidak valid
         }

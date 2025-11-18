@@ -54,5 +54,21 @@ class Controller {
          header("Location: " . $url);
          exit();
      }
+
+     /**
+      * Redirect ke halaman sebelumnya (HTTP_REFERER).
+      * Jika tidak ada referer, redirect ke dashboard.
+      */
+     protected function redirectBack() {
+         $url = $_SERVER['HTTP_REFERER'] ?? 'index.php?c=DashboardController&m=index';
+         
+         // Mencegah redirect loop jika pengguna me-refresh halaman toggle
+         if (strpos($url, 'FavoritController&m=toggle') !== false) {
+             $url = 'index.php?c=DashboardController&m=index';
+         }
+         
+         header("Location: " . $url);
+         exit();
+     }
 }
 ?>

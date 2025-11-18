@@ -6,41 +6,72 @@ class AdminController extends Controller {
     private $adminModel;
 
     public function __construct() {
-        // 1. Cek Login
         if (!isset($_SESSION['user_id'])) {
              $this->redirect('AuthController', 'loginView');
         }
-        
-        // 2. Cek Role (HANYA ADMIN)
         if ($_SESSION['user_role'] !== 'admin') { 
              $_SESSION['error_message'] = 'Anda tidak memiliki akses ke halaman ini.';
              $this->redirect('DashboardController', 'index');
         }
-
-        // 3. Load Model
         $this->adminModel = $this->loadModel('AdminModel');
     }
 
     /**
-     * Menampilkan halaman 'Kelola Pengguna'.
-     * Ini adalah method "direct2" yang akan dipanggil dari link.
+     * Menampilkan halaman 'Kelola Pengguna' dengan Pencarian.
      */
     public function kelolaPengguna() {
-        // Ambil data dari model
-        $data['daftarPengguna'] = $this->adminModel->getAllUsers();
-        
-        // Data lain untuk view
-        $data['namaPengguna'] = $_SESSION['user_nama'] ?? 'Admin';
+        $keyword = $_GET['q'] ?? null; // Ambil keyword pencarian
 
-        // Muat view (UI)
+        $data['daftarPengguna'] = $this->adminModel->getAllUsers($keyword);
+        $data['namaPengguna'] = $_SESSION['user_nama'] ?? 'Admin';
+        $data['keyword'] = $keyword;
+
         $this->loadView('admin_kelola_pengguna', $data);
     }
-    
+
     /**
-     * (Contoh) Method untuk Log Aktivitas
+     * Proses Tambah Pengguna Baru
      */
-     public function logAktivitas() {
-        // Ambil filter dari URL (jika ada)
+    public function tambahPengguna() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = [
+                'nama' => $_POST['nama'],
+                'email' => $_POST['email'],
+                'telepon' => $_POST['telepon'],
+                'role' => $_POST['role'],
+                'password' => password_hash($_POST['password'], PASSWORD_DEFAULT) // Hash password
+            ];
+
+            // Validasi sederhana (cek email unique sebaiknya ditambahkan di model juga)
+            if ($this->adminModel->createUser($data)) {
+                $_SESSION['success_message'] = "Pengguna berhasil ditambahkan.";
+            } else {
+                $_SESSION['error_message'] = "Gagal menambahkan pengguna.";
+            }
+        }
+        $this->redirect('AdminController', 'kelolaPengguna');
+    }
+
+    /**
+     * Proses Hapus Pengguna
+     */
+    public function hapusPengguna() {
+        $id = $_GET['id'] ?? null;
+        $role = $_GET['role'] ?? null;
+
+        if ($id && $role) {
+            if ($this->adminModel->deleteUser($id, $role)) {
+                $_SESSION['success_message'] = "Pengguna berhasil dihapus.";
+            } else {
+                $_SESSION['error_message'] = "Gagal menghapus pengguna.";
+            }
+        }
+        $this->redirect('AdminController', 'kelolaPengguna');
+    }
+    
+    public function logAktivitas() {
+        // ... (kode log aktivitas sama seperti sebelumnya) ...
+         // Ambil filter dari URL (jika ada)
         $filters = [
             'role' => $_GET['role'] ?? null,
             'aksi' => $_GET['aksi'] ?? null,

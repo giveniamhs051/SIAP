@@ -79,6 +79,10 @@
                                     <input type="radio" name="role" value="vendor" class="focus:ring-brand-yellow text-brand-blue" required>
                                     <span class="ml-2 text-sm text-gray-700">Vendor</span>
                                 </label>
+                                <label class="flex items-center">
+                                    <input type="radio" name="role" value="admin" class="focus:ring-brand-yellow text-brand-blue" required>
+                                    <span class="ml-2 text-sm text-gray-700">Admin</span>
+                                </label>
                             </div>
                         </div>
 

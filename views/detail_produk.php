@@ -199,56 +199,7 @@ $js_jadwal_booked = json_encode($jadwal_booked);
 
         <?php if ($produk): ?>
         
-        <div class="lg:flex lg:gap-8" 
-             x-data="{ 
-                qty: 1, 
-                stok: <?php echo $produk['stok_barang'] ?? 1; ?>,
-                harga: <?php echo $produk['harga_sewa'] ?? 0; ?>,
-                tglMulai: null,
-                tglSelesai: null,
-                duration: 0,
-                picker: null,
-                minDateDB: '<?php echo $minDate; ?>',
-                
-                // --- MODIFIKASI BARU: Ambil data jadwal dari PHP ---
-                jadwalBooked: <?php echo $js_jadwal_booked; ?>
-             }"
-             x-init="
-                // Inisialisasi Litepicker
-                picker = new Litepicker({
-                    element: document.getElementById('datepicker-inline'),
-                    inlineMode: true,
-                    singleMode: false,
-                    allowRepick: true,
-                    format: 'DD MMM YYYY',
-                    
-                    // --- MODIFIKASI BARU: Terapkan Logika Jadwal ---
-                    minDate: minDateDB,      // Tanggal mulai tersedia dari vendor
-                    lockDates: jadwalBooked, // Tanggal yang sudah dibooking
-                    // --- AKHIR MODIFIKASI ---
-
-                    numberOfMonths: 1,
-                    buttonText: { apply: 'Terapkan', reset: 'Reset' },
-                    onSelected: function(date1, date2) {
-                        if (date1 && date2) {
-                            this.tglMulai = date1.format('YYYY-MM-DD');
-                            this.tglSelesai = date2.format('YYYY-MM-DD');
-                            
-                            // Hitung durasi (diff->days + 1)
-                            let d1 = new Date(date1.dateInstance);
-                            let d2 = new Date(date2.dateInstance);
-                            let diffTime = Math.abs(d2 - d1);
-                            let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                            duration = diffDays + 1; // +1 untuk rentang inklusif
-                        } else {
-                            duration = 0;
-                            tglMulai = null;
-                            tglSelesai = null;
-                        }
-                    }
-                });
-             "
-        >
+        <div class="lg:flex lg:gap-8" x-data="produkDetail">
 
             <div class="lg:w-2/3 w-full">
                 <div class="bg-white p-5 sm:p-6 rounded-lg shadow-md">
@@ -298,25 +249,18 @@ $js_jadwal_booked = json_encode($jadwal_booked);
                 </div>
             </div>
 
-            <div class="lg:w-1/3 w-full mt-6 lg:mt-0">
+           <div class="lg:w-1/3 w-full mt-6 lg:mt-0">
                 <div class="bg-white p-5 sm:p-6 rounded-lg shadow-md lg:sticky lg:top-24">
                     <h2 class="text-lg font-semibold text-gray-800 mb-4">Atur Penyewaan</h2>
                     
-                    <form action="index.php" method="GET" @submit.prevent="
-                        // LANGSUNG ISI INPUT (biarpun kosong/null)
-                        document.getElementById('form_qty').value = qty;
-                        document.getElementById('form_tgl_mulai').value = tglMulai;
-                        document.getElementById('form_tgl_selesai').value = tglSelesai;
-
-                        // LANGSUNG SUBMIT TANPA IF/ELSE
-                        $event.target.submit();
-                    ">
+                    <form x-ref="sewaForm" action="index.php" method="GET" @submit.prevent="submitForm">
                         <input type="hidden" name="c" value="OrderController">
                         <input type="hidden" name="m" value="checkoutView">
                         <input type="hidden" name="id" value="<?php echo $produk['id_barang']; ?>">
-                        <input type="hidden" name="qty" id="form_qty">
-                        <input type="hidden" name="tgl_mulai" id="form_tgl_mulai">
-                        <input type="hidden" name="tgl_selesai" id="form_tgl_selesai">
+                        
+                        <input type="hidden" name="qty" :value="qty">
+                        <input type="hidden" name="tgl_mulai" :value="tglMulai">
+                        <input type="hidden" name="tgl_selesai" :value="tglSelesai">
                         
                         <p class="text-3xl font-bold text-brand-blue mb-4">
                             <?php echo formatRupiah($produk['harga_sewa']); ?> 
@@ -326,30 +270,18 @@ $js_jadwal_booked = json_encode($jadwal_booked);
                         <div class="mb-4">
                             <h3 class="font-semibold text-gray-800 mb-2">Jumlah</h3>
                             <div class="flex items-center gap-3">
-                                <button 
-                                    type="button" 
-                                    @click="qty = Math.max(1, qty - 1)" 
-                                    class="w-8 h-8 bg-gray-200 text-gray-700 rounded-md font-bold text-lg flex items-center justify-center hover:bg-gray-300"
-                                    :disabled="qty <= 1">
-                                    -
-                                </button>
+                                <button type="button" @click="qty = Math.max(1, qty - 1)" class="w-8 h-8 bg-gray-200 text-gray-700 rounded-md font-bold text-lg hover:bg-gray-300" :disabled="qty <= 1">-</button>
                                 <span class="text-lg font-semibold text-gray-900 w-8 text-center" x-text="qty"></span>
-                                <button 
-                                    type="button" 
-                                    @click="qty = Math.min(stok, qty + 1)" 
-                                    class="w-8 h-8 bg-gray-200 text-gray-700 rounded-md font-bold text-lg flex items-center justify-center hover:bg-gray-300"
-                                    :disabled="qty >= stok">
-                                    +
-                                </button>
+                                <button type="button" @click="qty = Math.min(stok, qty + 1)" class="w-8 h-8 bg-gray-200 text-gray-700 rounded-md font-bold text-lg hover:bg-gray-300" :disabled="qty >= stok">+</button>
                                 <span class="text-sm text-gray-500">Stok: <?php echo $produk['stok_barang']; ?></span>
                             </div>
                         </div>
 
                         <div class="mb-4">
                             <h3 class="font-semibold text-gray-800 mb-2">Pilih Tanggal Sewa</h3>
-                            <div id="datepicker-inline"></div>
+                            <input id="datepicker-inline" type="hidden">
+                            <div id="litepicker-container"></div>
                         </div>
-
 
                         <div class="flex justify-between items-center my-5 py-4 border-t">
                             <span class="text-gray-600 text-base">Subtotal</span>
@@ -357,12 +289,18 @@ $js_jadwal_booked = json_encode($jadwal_booked);
                                   x-text="duration > 0 ? 'Rp ' + (qty * harga * duration).toLocaleString('id-ID') : 'Pilih tanggal'">
                             </span>
                         </div>
-                        <p class="text-sm text-gray-500 -mt-6 mb-4 text-right" x-show="duration > 0" x-text="`(${qty} brg x ${duration} hari)`"></p>
+                        
+                        <p class="text-sm text-gray-500 -mt-6 mb-4 text-right" 
+                           x-show="duration > 0" 
+                           x-text="`(${qty} brg x ${duration} hari)`">
+                        </p>
 
                         <div class="grid grid-cols-1 gap-3">
                             <button 
                                 type="submit" 
-                                class="w-full bg-brand-yellow text-brand-blue font-semibold py-3 px-4 rounded-lg hover:opacity-90 transition-colors duration-300 focus:outline-none">
+                                class="w-full font-semibold py-3 px-4 rounded-lg transition-colors duration-300 focus:outline-none"
+                                :class="duration > 0 ? 'bg-brand-yellow text-brand-blue hover:opacity-90' : 'bg-gray-300 text-gray-500 cursor-not-allowed'"
+                                :disabled="duration === 0">
                                 Sewa Sekarang
                             </button>
                         </div>
@@ -370,34 +308,72 @@ $js_jadwal_booked = json_encode($jadwal_booked);
                 </div>
             </div>
 
-        </div> <?php else: ?>
-            <div class="text-center py-20">
-                <h1 class="text-2xl font-bold text-gray-700">Produk Tidak Ditemukan</h1>
-                <p class="text-gray-500 mb-6">Produk yang Anda cari mungkin telah dihapus atau tidak tersedia.</p>
-                <a href="index.php?c=DashboardController&m=index" class="bg-brand-blue text-white font-semibold py-2 px-5 rounded-lg hover:bg-opacity-90">
-                    Kembali ke Beranda
-                </a>
-            </div>
-        <?php endif; ?>
+        </div> 
+        
+        <script>
+            // Definisi Data Alpine
+            document.addEventListener('alpine:init', () => {
+                Alpine.data('produkDetail', () => ({
+                    qty: 1,
+                    stok: <?php echo $produk['stok_barang'] ?? 1; ?>,
+                    harga: <?php echo $produk['harga_sewa'] ?? 0; ?>,
+                    tglMulai: '',
+                    tglSelesai: '',
+                    duration: 0,
+                    picker: null,
+
+                    init() {
+                        // Setup Litepicker setelah Alpine siap
+                        this.$nextTick(() => {
+                            this.setupPicker();
+                        });
+                    },
+
+                    setupPicker() {
+                        this.picker = new Litepicker({
+                            element: document.getElementById('datepicker-inline'),
+                            parentEl: document.getElementById('litepicker-container'),
+                            inlineMode: true,
+                            singleMode: false, // Mode Range
+                            allowRepick: true,
+                            format: 'YYYY-MM-DD',
+                            minDate: '<?php echo $minDate; ?>',
+                            lockDates: <?php echo $js_jadwal_booked; ?>,
+                            numberOfMonths: 1,
+                            
+                            // Callback saat tanggal dipilih
+                            setup: (picker) => {
+                                picker.on('selected', (date1, date2) => {
+                                    // Simpan ke variabel Alpine
+                                    this.tglMulai = date1.format('YYYY-MM-DD');
+                                    this.tglSelesai = date2.format('YYYY-MM-DD');
+
+                                    // Hitung durasi
+                                    const d1 = date1.dateInstance;
+                                    const d2 = date2.dateInstance;
+                                    const diffTime = Math.abs(d2 - d1);
+                                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+                                    this.duration = diffDays + 1; // +1 hari inklusif
+                                });
+                            }
+                        });
+                    },
+
+                    submitForm() {
+                        // Validasi tambahan sebelum submit
+                        if (this.duration > 0 && this.tglMulai && this.tglSelesai) {
+                            this.$refs.sewaForm.submit();
+                        } else {
+                            alert("Silakan pilih tanggal sewa terlebih dahulu.");
+                        }
+                    }
+                }));
+            });
+        </script>
+        
+        <?php else: ?>
+            <?php endif; ?>
 
     </main>
-    
-    <script>
-        // Script untuk dropdown header
-        document.addEventListener('DOMContentLoaded', function () {
-            // Logic untuk Alpine.js dropdown (jika tidak menggunakan Alpine)
-             const userMenuButton = document.getElementById('user-menu-button');
-             const userMenu = document.getElementById('user-menu');
-             // Cek jika x-data tidak dipakai
-             if (userMenuButton && userMenu && typeof Alpine === 'undefined') { 
-                 userMenuButton.addEventListener('click', () => userMenu.classList.toggle('hidden'));
-                 document.addEventListener('click', (event) => {
-                     if (!userMenuButton.contains(event.target) && !userMenu.contains(event.target)) {
-                         userMenu.classList.add('hidden');
-                     }
-                 });
-             }
-        });
-    </script>
 </body>
 </html>

@@ -24,6 +24,9 @@ class DashboardController extends Controller {
         // Tampilkan view dashboard yang sesuai
         switch ($role) {
             case 'admin':
+                // --- UPDATE: Ambil Statistik untuk Admin ---
+                $adminModel = $this->loadModel('AdminModel');
+                $data['stats'] = $adminModel->getDashboardStats();
                 $this->loadView('dashboard_admin', $data);
                 break;
             case 'vendor':
@@ -35,6 +38,11 @@ class DashboardController extends Controller {
                 // Muat model produk
                 $produkModel = $this->loadModel('ProdukModel');
                 
+                // === TAMBAHAN BARU ===
+                // Muat model favorit untuk mengambil ID
+                $favoritModel = $this->loadModel('FavoritModel');
+                // === AKHIR TAMBAHAN BARU ===
+
                 // Ambil parameter filter dari URL
                 $query = $_GET['q'] ?? null;
                 $lokasi = $_GET['lokasi'] ?? null;
@@ -43,7 +51,7 @@ class DashboardController extends Controller {
                 // Ambil data produk berdasarkan filter
                 $data['produkTerlaris'] = $produkModel->getProdukTerbaruAktif(4, $query, $lokasi);
                 $data['rekomendasiProduk'] = $produkModel->getRekomendasiProduk(4, $query, $lokasi);
-                
+
                 // Jika halaman 'produk' atau jika ada filter aktif, ambil semua produk
                 if ($page == 'produk' || !empty($query) || !empty($lokasi)) {
                     $data['semuaProduk'] = $produkModel->getSemuaProduk($query, $lokasi);
@@ -58,7 +66,8 @@ class DashboardController extends Controller {
                 $data['currentPage'] = $page;
                 $data['queryAktif'] = $query;
                 $data['lokasiAktif'] = $lokasi;
-                
+                $data['favoritIds'] = $favoritModel->getFavoriteIdsByPenyewa($_SESSION['user_id']);
+
                 // Muat view dashboard penyewa dengan data produk
                 $this->loadView('dashboard_penyewa', $data); 
                 break;
